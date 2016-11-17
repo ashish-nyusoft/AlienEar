@@ -1,0 +1,8 @@
+Widgets.NivoSlider
+NyunopCommerce.Nop.Widgets.NopTestimonial.Slider
+Shipping.AustraliaPost
+Payments.AuthorizeNet
+Payments.Manual
+Payments.CheckMoneyOrder
+Shipping.FixedRate
+Tax.CountryStateZip

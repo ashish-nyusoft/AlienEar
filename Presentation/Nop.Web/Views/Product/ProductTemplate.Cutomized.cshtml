@@ -1,0 +1,969 @@
+﻿@model ProductDetailsModel
+@using Nop.Core
+@using Nop.Core.Domain.Seo;
+@using Nop.Core.Infrastructure;
+@using Nop.Services.Localization;
+@using Nop.Web.Models.Catalog;
+@{
+    Layout = "~/Views/Shared/HomeCateg_ColumnsOne.cshtml";
+
+    //title, meta
+    Html.AddTitleParts(!String.IsNullOrEmpty(Model.MetaTitle) ? Model.MetaTitle : Model.Name);
+    Html.AddMetaDescriptionParts(Model.MetaDescription);
+    Html.AddMetaKeywordParts(Model.MetaKeywords);
+
+    var seoSettings = EngineContext.Current.Resolve<SeoSettings>();
+
+
+
+//ashish
+ var settingservice = EngineContext.Current.Resolve<ISettingService>();
+    var pluginmodel = settingservice.GetSettingByKey("mytestimonialsettings.showtestimonialpage", "null", 0, false); 
+//ashish
+
+
+    //canonical URL
+    if (seoSettings.CanonicalUrlsEnabled)
+    {
+        var productUrl = Url.RouteUrl("Product", new { SeName = Model.SeName }, this.Request.Url.Scheme);
+        Html.AddCanonicalUrlParts(productUrl);
+    }
+
+    //open graph META tags
+    if (seoSettings.OpenGraphMetaTags)
+    {
+        var storeName = EngineContext.Current.Resolve<IStoreContext>().CurrentStore.GetLocalized(x => x.Name);
+        Html.AddHeadCustomParts("<meta property=\"og:type\" content=\"product\" />");
+        Html.AddHeadCustomParts("<meta property=\"og:title\" content=\"" + Html.Encode(Model.Name) + "\" />");
+        Html.AddHeadCustomParts("<meta property=\"og:description\" content=\"" + Html.Encode(Model.MetaDescription) + "\" />");
+        Html.AddHeadCustomParts("<meta property=\"og:image\" content=\"" + Model.DefaultPictureModel.ImageUrl + "\" />");
+        Html.AddHeadCustomParts("<meta property=\"og:url\" content=\"" + Request.Url.AbsoluteUri + "\" />");
+        Html.AddHeadCustomParts("<meta property=\"og:site_name\" content=\"" + Html.Encode(storeName) + "\" />");
+    }
+
+    //Twitter META tags
+    if (seoSettings.TwitterMetaTags)
+    {
+        var storeName = EngineContext.Current.Resolve<IStoreContext>().CurrentStore.GetLocalized(x => x.Name);
+        Html.AddHeadCustomParts("<meta property=\"twitter:card\" content=\"summary\" />");
+        Html.AddHeadCustomParts("<meta property=\"twitter:site\" content=\"" + Html.Encode(storeName) + "\" />");
+        Html.AddHeadCustomParts("<meta property=\"twitter:title\" content=\"" + Html.Encode(Model.Name) + "\" />");
+        Html.AddHeadCustomParts("<meta property=\"twitter:description\" content=\"" + Html.Encode(Model.MetaDescription) + "\" />");
+        Html.AddHeadCustomParts("<meta property=\"twitter:image\" content=\"" + Model.DefaultPictureModel.ImageUrl + "\" />");
+        Html.AddHeadCustomParts("<meta property=\"twitter:url\" content=\"" + Request.Url.AbsoluteUri + "\" />");
+    }
+}
+
+
+
+<script>
+
+    //jQuery(function ($) {
+    //    $('#product-form').validate({
+    //        rules: {},
+    //        messages: {},
+    //        submitHandler: function () {
+    //            return false
+    //        }
+    //    });
+    //    $('input[name^="LeftImage"]').rules('add', {
+    //        required: true,
+    //        accept: "image/jpeg, image/pjpeg"
+    //    })
+    //    $('input[name^="RightImage"]').rules('add', {
+    //        required: true,
+    //        accept: "image/jpeg, image/pjpeg"
+    //    })
+
+    //});
+    function addToCustomizedDetails() {
+
+        var x = $('.leftImage img:eq(1)').prop('src');
+        var x1 = $('.rightImage img:eq(1)').prop('src');
+        var customel = "";
+        var customer = "";
+        var custome = "";
+        if ($("#txtCustomeRightColor").val() != "") {
+            customel = $("#txtCustomeRightColor").val();
+        }
+        if ($("#txtCustomeLeftColor").val() != "") {
+            customer = $("#txtCustomeLeftColor").val();
+        }
+        var customecolVal = '';
+        if (customel.length != 0 && customer.length != 0) {
+            customecolVal = 'Left : ' + customel + ' , Right : ' + customer;
+        }
+        else {
+            customecolVal = 'NA';
+        }
+        var
+        json = {
+            image: x,
+            image1: x1,
+            id: '@Model.Id',
+            customeColor: customecolVal
+        };
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("Insert", "CustomizedProduct")',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            data: JSON.stringify(json)
+        }).done(function (data) {
+        })
+
+    }
+    function lcolormanage(img) {
+        $(".rightearcolor").val($(img).attr("data-colorName") + " , Hex Code : " + $(img).attr("data-colorCode"));//
+        //$("#9").html('NA');
+        //$("#9-1").html('NA');
+        $(".9-1").html('NA');
+        $("#txtCustomeRightColor").val("");
+        $("#txtCustomeLeftColor").val("");
+
+        $("#txtCustomeRightColor").css("background-color", "");
+        $("#txtCustomeLeftColor").css("background-color", "");
+
+        $("#txtCustomeRightColor").css("border-color", "none");
+        $("#txtCustomeLeftColor").css("border-color", "none");
+        var right = $('.leftImage img').attr('src');
+        if (right.indexOf("CustomizedLeft") != -1) {
+            $('.leftImage img').attr('src', $("#RightEar li div:first").attr("data-src"));
+            $('.rightImage img').attr('src', $(img).attr("data-src"));
+
+        }
+        else {
+
+            console.log($(img).attr("data-src"));
+            $('.rightImage img').attr('src', $(img).attr("data-src"));
+        }
+    }
+    function rgb2hex(rgb) {
+        rgb = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
+        function hex(x) {
+            return ("0" + parseInt(x).toString(16)).slice(-2);
+        }
+        return "#" + hex(rgb[1]) + hex(rgb[2]) + hex(rgb[3]);
+    }
+    //ashish
+    function rcolormanage(img) {
+        $(".leftearcolor").val($(img).attr("data-colorName") + " , Hex Code : " + $(img).attr("data-colorCode"));//
+        $("#txtCustomeRightColor").val("");
+        $("#txtCustomeLeftColor").val("");
+        $("#txtCustomeRightColor").css("background-color", "");
+        $("#txtCustomeLeftColor").css("background-color", "");
+        $("#txtCustomeRightColor").css("border-color", "none");
+        $("#txtCustomeLeftColor").css("border-color", "none");
+        var right = $('.rightImage img').attr('src');
+        if (right.indexOf("CustomizedRight") != -1) {
+            $('.rightImage img').attr('src', $("#LeftRar li div:first").attr("data-src"));
+            $('.leftImage img').attr('src', $(img).attr("data-src"));
+
+        }
+        else {
+
+            console.log($(img).attr("data-src"));
+            $('.leftImage img').attr('src', $(img).attr("data-src"));
+        }
+    }
+    function allcolormanage(img) {
+        $("#txtCustomeRightColor").val("");
+        $("#txtCustomeLeftColor").val("");
+        $("#txtCustomeRightColor").css("background-color", "");
+        $("#txtCustomeLeftColor").css("background-color", "");
+        console.log($(img).attr("data-src"));
+        $('.rightImage img').attr('src', $(img).attr("data-rsrc"));
+        $('.leftImage img').attr('src', $(img).attr("data-lsrc"));
+    }
+    $(document).ready(function () {
+        //var customeTextVal = $(".cutomecolorcheck");
+        //if (customeTextVal != '') {
+
+        //}
+
+        //$("#tabs").tabs("option", "disabled", [0, 1, 2]);
+        @*$("#ProductName").html('@Model.Name');
+        $("#10").html($('.customfaceplates :selected').text());
+        $("#11").html($('.faceplateslogo :selected').text());
+        $("#12").html($('.rushorder :selected').text());
+        $("#15").html($('.cordcolor :selected').text());
+        $("#9").html('Left : NA , Right : NA');
+        $("#ProductName-1").html('@Model.Name');
+        $("#10-1").html($('.customfaceplates :selected').text());
+        $("#11-1").html($('.faceplateslogo :selected').text());
+        $("#12-1").html($('.rushorder :selected').text());
+        $("#15-1").html($('.cordcolor :selected').text());
+        $("#9-1").html('Left : NA , Right : NA');*@
+        $(".ProductName-1").html('@Model.Name');
+        $(".10-1").html($('.customfaceplates :selected').text());
+        $(".11-1").html($('.faceplateslogo :selected').text());
+        $(".12-1").html($('.rushorder :selected').text());
+        $(".15-1").html($('.cordcolor :selected').text());
+        $(".9-1").html('Left : NA , Right : NA');
+        $('#checkbox1').change(function () {
+            if ($(this).is(":checked")) {
+                var returnVal = confirm("Are you sure?");
+                $(this).attr("checked", returnVal);
+            }
+            $('#textbox1').val($(this).is(':checked'));
+        });
+        $('#txtCustomeRightColor').change(function () {
+            $(".leftearcolor").val("");
+            $(".rightearcolor").val("");
+            if ($("#txtCustomeRightColor").val() == "" ){//&& $("#txtCustomeLeftColor").val() == "") {
+                //$('.rightImage img').attr('src', $("#RightEar li div:first").attr("data-src"));
+                $('.leftImage img').attr('src', $("#LeftRar li div:first").attr("data-src"));
+            }
+            else {
+                $('.leftImage img').attr('src', "/Themes/DefaultClean/Content/images/CustomizedLeft.jpg");
+                //$('.rightImage img').attr('src', "/alinear/Themes/DefaultClean/Content/images/CustomizedRight.png");
+            }
+        });
+        $('#txtCustomeLeftColor').change(function () {
+            $(".leftearcolor").val("");
+            $(".rightearcolor").val("");
+            if ($("#txtCustomeLeftColor").val() == "" ){//&& $("#txtCustomeLeftColor").val() == "") {
+                $('.rightImage img').attr('src', $("#RightEar li div:first").attr("data-src"));
+                //$('.leftImage img').attr('src', $("#LeftRar li div:first").attr("data-src"));
+            }
+            else {
+                //$('.leftImage img').attr('src', "/alinear/Themes/DefaultClean/Content/images/CustomizedLeft.png");
+                $('.rightImage img').attr('src', "/Themes/DefaultClean/Content/images/CustomizedRight.jpg");
+            }
+        });
+        //$(".LeftEarImage").click(function () {
+        //    debugger;
+        //    $('.leftImage img').attr('src', $(this).attr("data-src"));
+        //});
+        //$(".RightEarImage").click(function () {
+        //    debugger;
+        //    $('.rightImage img').attr('src', $(this).attr("data-src"));
+        //});
+
+        $("#toggal").change(function () {
+
+            if (this.checked) {
+                $('.leftImage img').attr('src', $("#all li div:first").attr("data-lsrc"));
+                $('.rightImage img').attr('src', $("#all li div:first").attr("data-rsrc"));
+
+                $(".single").show();
+                $(".comm").hide();
+            }
+            else {
+                $('.leftImage img').attr('src', $("#all li div:first").attr("data-lsrc"));
+                $('.rightImage img').attr('src', $("#all li div:first").attr("data-rsrc"));
+                $(".comm").show();
+                $(".single").hide();
+            }
+
+        });
+        $(".nexttab").click(function () {
+            var valid = 0;
+
+            if ($("#txtCustomeRightColor").val() == "" && $("#txtCustomeLeftColor").val() != "") {
+                if ($("#txtCustomeRightColor").val() == "") {
+                    $("#txtCustomeRightColor").css("border-color", "red");
+                }
+                if ($("#txtCustomeLeftColor").val() == "") {
+                    $("#txtCustomeLeftColor").css("border-color", "red");
+                }
+                valid = 1;
+            }
+            else if ($("#txtCustomeRightColor").val() != "" && $("#txtCustomeLeftColor").val() == "") {
+                if ($("#txtCustomeRightColor").val() == "") {
+                    $("#txtCustomeRightColor").css("border-color", "red");
+                }
+                if ($("#txtCustomeLeftColor").val() == "") {
+                    $("#txtCustomeLeftColor").css("border-color", "red");
+                }
+                valid = 1;
+            }
+
+            if (valid == 1) {
+                //$("#tabs").tabs("option", "disabled", [1]);
+                //$("#tabs").tabs({ active: 1 });
+                $("#tabs").tabs({ disabled: 1 });
+                //$("#tabs").tabs("select", this.hash);
+            }
+            else {
+                $("#tabs").tabs({ active: 2 });
+                $('html, body').animate({
+                    scrollTop: $("#tabs").offset().top
+                }, 500);
+            }
+        });
+    });
+    $(document).ready(function () {
+
+        @*$.ajax({
+            type: 'POST',
+            url: '@Url.Action("GetColors", "CustomizedProduct", new { productID = Model.Id })',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+        }).done(function (data) {
+            console.log("Ashish " + data);
+        });*@
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("GetColorsAll", "CustomizedProduct", new { productID = Model.Id })',
+        contentType: 'application/json',
+        dataType: 'json',
+        async: false,
+        success: function (data) {
+            //console.log("Ashish " + data.length);
+            //$("#LeftRar").empty();
+            //$("#RightEar").empty();
+            for (var i = 0 ; i < data.length; i++) {
+                $("#all").append("<li><div style='background-color:" + data[i].main + " ;border-radius: 100px;height: 25px;width: 25px;'  class='LeftEarImage' data-rsrc='" + data[i].right + "' data-lsrc='" + data[i].left + "' onClick='allcolormanage(this);' ></div></li>");
+                //$("#RightEar").append("<li><img src='" + data[i].main + "' class='RightEarImage' data-src='" + data[i].right + "'  onClick='rcolormanage(this);' /></li>");
+            }
+            //for (var j = 0 ; j < data.length; j++) {
+            //    $("#RightEar").append("<li><img src='' class='RightEarImage' data-src='' /></li>");
+            //}
+        },
+        error: function (data) {
+            console.log("Error " + data.status + " " + data.success);
+        }
+    });
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("GetColors", "CustomizedProduct", new { productID = Model.Id })',
+        contentType: 'application/json',
+        dataType: 'json',
+        async: false,
+        success: function (data) {
+            //alert("<li><div style='background-color:" + data[0].main + " ;border-radius: 100px;height: 25px;width: 25px;' class='LeftEarImage' data-src='" + data[0].left + "' onClick='lcolormanage(this);' ></div></li>");
+            //console.log("Ashish " + data.length);
+            //$("#LeftRar").empty();
+            //$("#RightEar").empty();
+            console.log(data);
+            for (var i = 0 ; i < data.length; i++) {
+                $("#LeftRar").append("<li><div data-toggle='tooltip' data-colorName='" + data[i].colorName + "'  data-placement='top' title='" + data[i].colorName + "' id='left" + data[i].Numbers + "' data-colorCode='" + data[i].main + "' style='background-color:" + data[i].main + " ;border-radius: 100px;height: 25px;width: 25px;' class='LeftEarImage' data-src='" + data[i].left + "' onClick='lcolormanage(this);' ></div></li>");
+                $("#RightEar").append("<li><div data-toggle='tooltip' data-colorName='" + data[i].colorName + "' data-placement='top' title='" + data[i].colorName + "' id='right" + data[i].Numbers + "' data-colorCode='" + data[i].main + "' style='background-color:" + data[i].main + " ;border-radius: 100px;height: 25px;width: 25px;' class='RightEarImage' data-src='" + data[i].right + "'  onClick='rcolormanage(this);' ></div></li>");
+            }
+            //for (var j = 0 ; j < data.length; j++) {
+            //    $("#RightEar").append("<li><img src='' class='RightEarImage' data-src='' /></li>");
+            //}
+        },
+        error: function (data) {
+            alert(data);
+            console.log("Error " + data.status + " " + data.success);
+        }
+    });
+
+        $('.rightImage img').attr('src', $("#LeftRar li div:first").attr("data-src"));
+        $('.leftImage img').attr('src', $("#RightEar li div:first").attr("data-src"));
+
+
+        $(".leftearcolor").val($("#RightEar li div:first").attr("data-colorName") + " , Hex Code : " + $("#RightEar li div:first").attr("data-colorCode"));
+        $(".rightearcolor").val($("#LeftRar li div:first").attr("data-colorName") + " , Hex Code : " + $("#LeftRar li div:first").attr("data-colorCode"));
+        //$('.leftImage img').attr('src', "http://nyusoft.in/alinear/Content/Images/Lr.png");
+        //$('.rightImage img').attr('src', "http://nyusoft.in/alinear/Content/Images/rr.png");
+    });
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip();
+    });
+</script>
+  <style>
+  .tooltipColor {
+    display: inline-block;
+    width: 5em;
+  }
+  </style>
+<script src="~/Themes/DefaultClean/Content/js/colpick.js"></script>
+<link href="~/Themes/DefaultClean/Content/css/colpick.css" rel="stylesheet" />
+@*<script>
+    $(function () {
+        $("#tabs").tabs();
+    });
+  </script>*@
+<!--product breadcrumb-->
+@*@section Breadcrumb
+{
+    @Html.Partial("_ProductBreadcrumb", Model.Breadcrumb)
+}*@
+@*@Html.Widget("productdetails_after_breadcrumb", Model.Id)*@
+@*<div class="product_banner">
+    <img src="/Themes/DefaultClean/Content/images/product-banner.png">
+</div>*@
+<div class="master-wrapper-content">
+    <div class="page product-details-page">
+        <div class="page-body">
+            @Html.Widget("productdetails_top", Model.Id)
+            @using (Html.BeginRouteForm("Product", new { SeName = Model.SeName }, FormMethod.Post, new { id = "product-details-form" }))
+            {
+                <div itemscope itemtype="http://schema.org/Product" data-productid="@Model.Id">
+                    <div class="product-essential">
+                        @Html.Widget("productdetails_before_pictures", Model.Id)
+                        <!--product pictures-->
+                        @*@Html.Partial("_CustomizedProductDetailsPictures", Model)*@
+                        @Html.Widget("productdetails_after_pictures", Model.Id)
+                        @*<div class="overview">*@
+                        <div>
+                            @Html.Partial("_Discontinued", Model)
+                            <div class="product-name">
+                                <div class="page-title">
+                                    <h1 itemprop="name">
+                                        @Model.Name
+                                    </h1>
+                                </div>
+
+
+                            </div>
+
+
+
+                            <script>
+                                $(function () {
+                                    $("#tabs").tabs({ active: 0 });
+
+                                    //{
+                                    //	cache: false,
+                                    //	load:function(event,ui) {
+                                    //		var index = $(ui.tab).parent().index();
+
+                                    //		console.log(index);
+                                    //	}
+                                    //});
+                                });
+                            </script>
+                            <div id="tabs">
+                                <ul>
+                                    <li><a href="#tabs-1">specifications</a></li>
+                                    <li><a href="#tabs-2">choose color</a></li>
+                                    @*<li><a id="finalStep" class="nexttab" href="#tabs-3">Choose Case and Cable</a></li>*@
+                                    <li><a id="" class="nexttab" href="#tabs-3">Options</a></li>
+                                    <li><a id="finalStep" class="" href="#tabs-4">Order Info</a></li>
+
+                                </ul>
+                                <div id="tabs-1" class="tab1">
+                                    @Html.Partial("_ProductSpecifications", Model.ProductSpecifications)
+                                </div>
+                                <div id="tabs-2" class="tab1">
+                                    <div class="specification_02_tab">
+                                        <div class="left-part">
+                                            <h3>Choose color</h3>
+                                            @*<input type="checkbox" id="toggal" />*@
+                                            <div class="comm" style="display: none;">
+
+                                                <div>
+                                                    <ul id="all">
+                                                    </ul>
+                                                </div>
+                                            </div>
+
+                                            <div class="single">
+                                                @*<div class="left_choose_color">*@
+                                                <div>
+                                                    <label class="text-prompt">
+                                                        Left Ear
+                                                    </label>
+
+                                                    <div>
+
+                                                        <ul id="RightEar">
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                                <div class="free-custome">
+                                                    <ul>
+                                                        <li><span class="freecoutomecolor">choose color above or enter custom color below</span></li>
+                                                        <li>
+                                                            @*<input type="text" aria-multiline="true"  id="txtCustomeRightColor" />*@
+                                                            <textarea id="txtCustomeRightColor"  cols="25" placeholder="Enter Color" rows="5"></textarea>
+                                                        </li>
+                                                    </ul>
+                                                    <div id="picker1" style="display: none; position: absolute;"></div>
+                                                </div>
+                                            @*</div>*@
+                                               
+                                                @*<div class="right_choose_color">*@
+                                                <div>
+                                                    <label class="text-prompt">
+                                                        Right Ear 
+                                                    </label>
+
+                                                    <div>
+                                                        <ul id="LeftRar">
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                                <div class="free-custome">
+                                                    <ul>
+                                                        <li><span  class="freecoutomecolor">choose color above or enter custom color below</span></li>
+                                                        <li>
+                                                            @*<input type="text" placeholder="Enter Color" aria-multiline="true" id="txtCustomeLeftColor" />*@
+                                                            <textarea id="txtCustomeLeftColor"  cols="25" placeholder="Enter Color" rows="5"></textarea>
+                                                            @*<div id="picker2" style="display: none; position: absolute;"></div>*@
+
+
+                                                        </li>
+                                                    </ul>
+                                                    <style>
+                                                        #picker2 {
+                                                            margin: 0;
+                                                            padding: 0;
+                                                            border: 0;
+                                                            width: 70px;
+                                                            height: 20px;
+                                                            border-right: 20px solid green;
+                                                            line-height: 20px;
+                                                        }
+                                                    </style>
+                                                    <script>
+                                                        $('#picker2').colpick({
+                                                            flat: true,
+                                                            layout: 'hex',
+                                                            submit: 0
+                                                        });
+                                                        $(document).ready(function () {
+                                                            //$("#txtCustomeLeftColor").click(function () {
+                                                            //    $("#picker1").hide();
+                                                            //    $("#picker2").show();
+                                                            //});
+                                                            $(".colpick_submit").click(function () {
+                                                                
+                                                                var customel = "NA";
+                                                                var customer = "NA";
+                                                                var custome = "NA";
+                                                                if ($('#picker1').is(':visible')) {
+                                                                    $("#txtCustomeRightColor").val($("#picker1").find("#hexacode").val());
+                                                                    //$("#txtCustomeRightColor").css("background-color", "#" + $("#picker1").find("#hexacode").val() + " !important");
+                                                                    $("#txtCustomeRightColor").attr("style", "background-color: #" + $("#picker1").find("#hexacode").val() + " !important;");
+                                                                }
+                                                                else {
+                                                                    $("#txtCustomeLeftColor").val($("#picker2").find("#hexacode").val());
+                                                                    //$("#txtCustomeLeftColor").css("background-color", "#" + $("#picker2").find("#hexacode").val() + " !important");
+                                                                    $("#txtCustomeLeftColor").attr("style", "background-color: #" + $("#picker2").find("#hexacode").val() + " !important;");
+                                                                }
+                                                                if ($("#txtCustomeRightColor").val() != "") {
+                                                                    customel = $("#txtCustomeRightColor").val();
+                                                                }
+                                                                if ($("#txtCustomeLeftColor").val() != "") {
+                                                                    customer = $("#txtCustomeLeftColor").val();
+                                                                }
+                                                                $(".coustomColor").html('Left : ' + customel + ' , Right : ' + customer);
+                                                                //$("#9-1").html('Left : ' + customel + ' , Right : ' + customer);
+                                                                $("#picker2").hide();
+                                                                $("#picker1").hide();
+                                                                //$('.leftImage img').attr('src', "/Themes/DefaultClean/Content/images/CustomizedLeft.jpg");		
+                                                                //$('.rightImage img').attr('src', "/Themes/DefaultClean/Content/images/CustomizedRight.jpg");		
+                                                                $('.leftImage img').attr('src', "/DefaultClean/Content/images/CustomizedLeft.jpg");
+                                                                $('.rightImage img').attr('src', "/DefaultClean/Content/images/CustomizedRight.jpg");
+                                                            });
+                                                        });
+                                                    </script>
+                                                </div>
+                                                @*</div>*@
+
+                                                 <style>
+                                                    #picker1 {
+                                                        margin: 0;
+                                                        padding: 0;
+                                                        border: 0;
+                                                        width: 70px;
+                                                        height: 20px;
+                                                        border-right: 20px solid green;
+                                                        line-height: 20px;
+                                                    }
+                                                </style>
+                                                <script>
+                                                    $('#picker1').colpick({
+                                                        flat: true,
+                                                        layout: 'hex',
+                                                        submit: 0
+                                                    });
+                                                    $(document).ready(function () {
+                                                        //$(".colpick_hex_field div").attr("readonly", "true");
+
+
+
+                                                        //$("#txtCustomeRightColor").click(function () {
+                                                        //    $("#picker1").show();
+                                                        //    $("#picker2").hide();
+                                                        //});
+
+                                                    });
+                                                </script>
+                                            </div>
+
+                                            @{
+                var dataDictAttributes = new ViewDataDictionary();
+                dataDictAttributes.TemplateInfo.HtmlFieldPrefix = string.Format("attributes_{0}", Model.Id);
+                                                @Html.Partial("_ProductAttributes1", Model.ProductAttributes, dataDictAttributes)
+                                            }
+                                        </div>
+
+                                        <div class="right-part">
+                                            @Html.Partial("_CustomizedProductDetailsPictures", Model)
+                                            @{
+                var dataDictPrice1 = new ViewDataDictionary();
+                                                
+                                            }
+                                            @Html.Partial("_CutomizedAttributeShow1", Model.ProductAttributes, dataDictAttributes)
+                                            <div class="right-part-amount-btn">
+                                                @Html.Partial("_ProductPrice", Model.ProductPrice, dataDictPrice1)
+                                                @Html.Partial("_ProductTierPrices", Model.TierPrices)
+                                                <div class="next-btn"><span id="Next-tab-change">Next</span></div>
+                                            </div>
+                                        </div>
+                                        <div class="clear"></div>
+                                    </div>
+                                    <div class="clear"></div>
+                                </div>
+                                <div id="tabs-3" class="tab1">
+                                    <div class="specification_02_tab specific-tab-3">
+                                        <div class="left-part">
+                                            @{
+                var dataDictAttributes1 = new ViewDataDictionary();
+                dataDictAttributes.TemplateInfo.HtmlFieldPrefix = string.Format("attributes_{0}", Model.Id);
+                                                @Html.Partial("_ProductAttributes", Model.ProductAttributes, dataDictAttributes1)
+                                            }
+                                        </div>
+                                        <div class="right-part">
+                                            @Html.Partial("_CustomizedProductDetailsPictures", Model)
+                                            <!--price & add to cart-->
+                                            @{
+                var dataDictPrice = new ViewDataDictionary();
+                dataDictPrice.TemplateInfo.HtmlFieldPrefix = string.Format("price_{0}", Model.Id);
+                                                
+
+                                                
+                                                @Html.Partial("_CutomizedAttributeShow1", Model.ProductAttributes, dataDictAttributes)
+                var dataDictAddToCart = new ViewDataDictionary();
+                dataDictAddToCart.TemplateInfo.HtmlFieldPrefix = string.Format("addtocart_{0}", Model.Id);
+                                                <div class="right-part-amount-btn">
+                                                    @*@Html.Partial("_ProductPrice", Model.ProductPrice, dataDictPrice)
+                                                    @Html.Partial("_ProductTierPrices", Model.TierPrices)
+                                                    @Html.Partial("_CutomizedAddToCart", Model.AddToCart, dataDictAddToCart)*@
+                                                    <div class="next-btn"><span id="Next-tab-change-final">Next</span></div>
+                                                </div>
+                                            }
+                                        </div>
+                                        <div class="clear"></div>
+                                    </div>
+                                    <div class="clear"></div>
+                                </div>
+                                <div id="tabs-4" class="tab1">
+                                    <div class="specification_02_tab specific-tab-3">
+                                        <div class="left-part">
+                                            @{
+                                                var dataDictAttributes2 = new ViewDataDictionary();
+                                                dataDictAttributes2.TemplateInfo.HtmlFieldPrefix = string.Format("attributes_{0}", Model.Id);
+                                                @Html.Partial("_ProductAttributes_final", Model.ProductAttributes, dataDictAttributes2)
+                                            }
+                                        </div>
+                                        <div class="right-part">
+                                            @Html.Partial("_CustomizedProductDetailsPictures", Model)
+                                            <!--price & add to cart-->
+                                            @{
+                                                var dataDictPrice2 = new ViewDataDictionary();
+                                                dataDictPrice2.TemplateInfo.HtmlFieldPrefix = string.Format("price_{0}", Model.Id);
+
+
+
+                                                @Html.Partial("_CutomizedAttributeShow1", Model.ProductAttributes, dataDictAttributes2)
+                                                var dataDictAddToCart2 = new ViewDataDictionary();
+                                                dataDictAddToCart2.TemplateInfo.HtmlFieldPrefix = string.Format("addtocart_{0}", Model.Id);
+                                                <div class="right-part-amount-btn">
+                                                    @Html.Partial("_ProductPrice", Model.ProductPrice, dataDictPrice)
+                                                    @Html.Partial("_ProductTierPrices", Model.TierPrices)
+                                                    @Html.Partial("_CutomizedAddToCart", Model.AddToCart, dataDictAddToCart)
+                                                </div>
+                                            }
+                                        </div>
+                                        <div class="clear"></div>
+                                    </div>
+                                    <div class="clear"></div>
+                                </div>
+                            </div>
+
+
+
+
+                            @*@if (!String.IsNullOrEmpty(Model.ShortDescription))
+                        {
+                            <div class="short-description">
+                                @Html.Raw(Model.ShortDescription)
+                            </div>
+                        }
+@Html.Widget("productdetails_overview_top", Model.Id)
+                        <!--product reviews-->
+                        @Html.Partial("_ProductReviewOverview", Model.ProductReviewOverview)
+                        <!--manufacturers-->
+                        @Html.Partial("_ProductManufacturers", Model.ProductManufacturers)
+                        <!--availability-->
+                        @Html.Partial("_Availability", Model)
+                        <!--SKU, MAN, GTIN, vendor-->
+                        @Html.Partial("_SKU_Man_GTIN_Ven", Model)
+                        <!--delivery-->
+                        @Html.Partial("_DeliveryInfo", Model)
+                        <!--sample download-->
+                        @Html.Partial("_DownloadSample", Model)*@
+                            <!--attributes-->
+                            @*ashish*@
+                            @*<div id="tabs">
+                            <ul>
+                                <li><a href="#tabs-1">CHOOSE COLOR</a></li>
+                                <li><a href="#tabs-2">CHOOSE CASE AND CABLE</a></li>
+                            </ul>
+                            <div id="tabs-1">*@
+                            @*<input type="checkbox" id="toggal" />
+                        <div class="comm">
+
+                            <div>
+                                <ul id="all">
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="single" style="display: none;">
+                            <div>
+                                <label class="text-prompt">
+                                    Left Ear
+                                </label>
+
+                                <div>
+
+                                    <ul id="RightEar">
+                                    </ul>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="text-prompt">
+                                    Right Ear 
+                                </label>
+
+                                <div>
+                                    <ul id="LeftRar">
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>*@
+                            @*</div>*@
+                            @*<div id="tabs-2">
+                            </div>*@
+                            @*</div>*@
+
+
+                            @* <script>
+                            $(function () {
+                                $("#tabs").tabs();
+                            });
+                        </script>*@
+                            @*end*@
+                            @* @{
+                        var dataDictAttributes = new ViewDataDictionary();
+                        dataDictAttributes.TemplateInfo.HtmlFieldPrefix = string.Format("attributes_{0}", Model.Id);
+                            @Html.Partial("_ProductAttributes", Model.ProductAttributes, dataDictAttributes)
+                        }*@
+                            <!--gift card-->
+                            @* @{
+                        var dataDictGiftCard = new ViewDataDictionary();
+                        dataDictGiftCard.TemplateInfo.HtmlFieldPrefix = string.Format("giftcard_{0}", Model.Id);
+                            @Html.Partial("_GiftCardInfo", Model.GiftCard, dataDictGiftCard)
+                        }
+                        <!--rental info-->
+                        @{
+                        var dataDictRental = new ViewDataDictionary();
+                        dataDictRental.TemplateInfo.HtmlFieldPrefix = string.Format("rental_{0}", Model.Id);
+                            @Html.Partial("_RentalInfo", Model, dataDictRental)
+                        }
+                        
+                        <!--wishlist, compare, email a friend-->
+                        <div class="overview-buttons">
+                            @Html.Widget("productdetails_inside_overview_buttons_before", Model.Id)
+                            @{
+                        var dataDictAddToWishlist = new ViewDataDictionary();
+                        dataDictAddToWishlist.TemplateInfo.HtmlFieldPrefix = string.Format("addtocart_{0}", Model.Id);
+                                @Html.Partial("_AddToWishlist", Model.AddToCart, dataDictAddToWishlist)
+                            }
+                            @Html.Partial("_CompareProductsButton", Model)
+                            @Html.Partial("_ProductEmailAFriendButton", Model)
+                            @Html.Widget("productdetails_inside_overview_buttons_after", Model.Id)
+                        </div>
+                        @Html.Partial("_ShareButton", Model)
+                        @Html.Widget("productdetails_overview_bottom", Model.Id)
+                    </div>
+                    @if (!String.IsNullOrEmpty(Model.FullDescription))
+                    {
+                        <div class="full-description" itemprop="description">
+                            @Html.Raw(Model.FullDescription)
+                        </div>
+                    }*@
+                        </div>
+                        @* @Html.Widget("productdetails_before_collateral", Model.Id)
+                <div class="product-collateral">
+                    @Html.Partial("_ProductSpecifications", Model.ProductSpecifications)
+                    @Html.Partial("_ProductTags", Model.ProductTags)
+                </div>
+                @Html.Action("ProductsAlsoPurchased", "Product", new { productId = Model.Id })
+                @Html.Action("RelatedProducts", "Product", new { productId = Model.Id })*@
+                    </div>
+                </div>
+            }
+            @*@Html.Widget("productdetails_bottom", Model.Id)*@
+        </div>
+    </div>
+
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $(".lblleftear").hide();
+        $(".lblrightear").hide();
+        $(".leftearcolor").hide();
+        $(".rightearcolor").hide();
+        if ($('.cutomecolorcheck').length > 0) {
+            //$("#txtCustomeRightColor").attr("disabled", "disabled");
+            //$("#txtCustomeLeftColor").attr("disabled", "disabled");
+            $("#txtCustomeRightColor").hide();
+            $("#txtCustomeLeftColor").hide();
+            $(".freecoutomecolor").hide();
+        }
+        else {
+            
+        }
+
+
+
+        $(".faceplateslogo").change(function () {
+            //$("#11-1").html($(".faceplateslogo option:selected").text());
+            $(".11-1").html($(".faceplateslogo option:selected").text());
+            //$("#11").html($(".faceplateslogo option:selected").text());
+        });
+        $(".customfaceplates").change(function () {
+            //$("#10-1").html($(".customfaceplates option:selected").text());
+            $(".10-1").html($(".customfaceplates option:selected").text());
+            //$("#10").val($(".customfaceplates option:selected").text());
+        });
+        $(".rushorder").change(function () {
+            //$("#12-1").html($(".rushorder option:selected").text());
+            $(".12-1").html($(".rushorder option:selected").text());
+            //$("#12").html($(".rushorder option:selected").text());
+        });
+        $(".cordcolor").change(function () {
+            //$("#15-1").html($(".cordcolor option:selected").text());
+            $(".15-1").html($(".cordcolor option:selected").text());
+            //$("#15").html($(".cordcolor option:selected").text());
+        });
+
+        $(".cutomecolorcheck").change(function () {
+            //$(".faceplateslogo option:selected").text()
+            if ($(this).is(":checked")) {
+                $("#txtCustomeRightColor").val('');// = "";
+                $("#txtCustomeLeftColor").val('');// = "";
+                //$("#txtCustomeRightColor").removeAttr("disabled");
+                //$("#txtCustomeLeftColor").removeAttr("disabled");
+                $("#txtCustomeRightColor").show();
+                $("#txtCustomeLeftColor").show();
+            }
+            else {
+                $('.leftImage img').attr('src', $("#RightEar li div:first").attr("data-src"));
+                $('.rightImage img').attr('src', $("#LeftRar li div:first").attr("data-src"));
+                //$("#txtCustomeRightColor").attr("disabled", "disabled");
+                //$("#txtCustomeLeftColor").attr("disabled", "disabled");
+                $("#txtCustomeRightColor").hide();
+                $("#txtCustomeLeftColor").hide();
+                $("#txtCustomeRightColor").val('');// = "";
+                $("#txtCustomeLeftColor").val('');// = "";
+            }
+        });
+
+        //$("#product_attribute_label_28").hide();
+        $("#product_attribute_label_30").hide();
+        //$("#product_attribute_label_29").hide();
+        $("#product_attribute_input_30").hide();
+        $(".customtext").hide();
+        $(".attriaddi:eq(1)").hide();
+        $(".attriaddi:eq(2)").hide();
+        $(".attributeAddiVal:eq(0)").attr("placeholder", "Who Are This Monitor For?")
+        $(".attributeAddiVal:eq(1)").attr("placeholder", "Email Address Of Person Receiving Monitors")
+        $(".attributeAddiVal:eq(2)").attr("placeholder", "What Band/Organization Are You With?")
+
+
+
+        $("#Next-tab-change").click(function () {
+            //debugger;
+            //var index = $('#tabs a[href="#tabs-2"]').parent().index();
+            //$('#tabs').tabs('select', index);
+
+            //if ($("#txtCustomeRightColor").val() == "" && $("#txtCustomeLeftColor").val() != "") {
+            //    if ($("#txtCustomeRightColor").val() == "") {
+            //        $("#txtCustomeRightColor").css("border-color", "red");
+            //    }
+            //    if ($("#txtCustomeLeftColor").val() == "") {
+            //        $("#txtCustomeLeftColor").css("border-color", "red");
+            //    }
+            //}
+            //else if ($("#txtCustomeRightColor").val() != "" && $("#txtCustomeLeftColor").val() == "") {
+            //    if ($("#txtCustomeRightColor").val() == "") {
+            //        $("#txtCustomeRightColor").css("border-color", "red");
+            //    }
+            //    if ($("#txtCustomeLeftColor").val() == "") {
+            //        $("#txtCustomeLeftColor").css("border-color", "red");
+            //    }
+            //}
+            //else {
+                $("#tabs").tabs({ active: 2 });
+                $('html, body').animate({
+                    scrollTop: $("#tabs").offset().top
+                }, 500);
+            //}
+        });
+
+        $("#Next-tab-change-final").click(function () {
+            //debugger;
+            //var index = $('#tabs a[href="#tabs-2"]').parent().index();
+            //$('#tabs').tabs('select', index);
+
+            //if ($("#txtCustomeRightColor").val() == "" && $("#txtCustomeLeftColor").val() != "") {
+            //    if ($("#txtCustomeRightColor").val() == "") {
+            //        $("#txtCustomeRightColor").css("border-color", "red");
+            //    }
+            //    if ($("#txtCustomeLeftColor").val() == "") {
+            //        $("#txtCustomeLeftColor").css("border-color", "red");
+            //    }
+            //}
+            //else if ($("#txtCustomeRightColor").val() != "" && $("#txtCustomeLeftColor").val() == "") {
+            //    if ($("#txtCustomeRightColor").val() == "") {
+            //        $("#txtCustomeRightColor").css("border-color", "red");
+            //    }
+            //    if ($("#txtCustomeLeftColor").val() == "") {
+            //        $("#txtCustomeLeftColor").css("border-color", "red");
+            //    }
+            //}
+            //else {
+            $("#tabs").tabs({ active: 3 });
+            $('html, body').animate({
+                scrollTop: $("#tabs").offset().top
+            }, 500);
+            //}
+        });
+
+        //$("#finalStep").click(function () {
+        //    if ($("#txtCustomeRightColor").val() != "" || $("#txtCustomeLeftColor").val() != "") {
+        //        if ($("#txtCustomeRightColor").val() != "") {
+        //            $("#txtCustomeRightColor").css("border-color", "red");
+        //        }
+        //        if ($("#txtCustomeLeftColor").val() != "") {
+        //            $("#txtCustomeLeftColor").css("border-color", "red");
+        //        }
+        //    }
+        //    else {
+        //        $("#tabs").tabs({ active: 2 });
+        //        $('html, body').animate({
+        //            scrollTop: $("#tabs").offset().top
+        //        }, 500);
+        //    }
+        //});
+        $(".start-ordering").click(function () {
+            //debugger;
+            //var index = $('#tabs a[href="#tabs-2"]').parent().index();
+            //$('#tabs').tabs('select', index);
+            $("#tabs").tabs({ active: 1 });
+            $('html, body').animate({
+                scrollTop: $("#tabs").offset().top
+            }, 500);
+        });
+    });
+</script>

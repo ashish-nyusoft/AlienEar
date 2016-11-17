@@ -1,0 +1,261 @@
+﻿@model NyunopCommerce.Nop.Widgets.NopTestimonial.Slider.Models.TestimonialRecord
+
+@{
+    Layout = "_AdminLayout.cshtml";
+    var descmsg = TempData["lbldescriptionerroredit"];
+}
+
+@using System
+@using Nop.Web.Framework
+@using Nop.Web.Framework.UI
+<!-- Button trigger modal -->
+
+<html>
+
+<head>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css">
+    @*<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+    <script src="//code.jquery.com/ui/1.11.1/jquery-ui.js"></script>*@
+    <script type="text/javascript" src="../ckeditor/ckeditor.js"></script>
+    <script>
+        $(function () {
+            $("#datepicker").datepicker();
+        });
+    </script>
+    <script type="text/javascript">
+        window.onload = function () {
+            if ('@descmsg' != '') {
+                $("#lbldescriptionerror").show();
+            }
+            else {
+                $("#lbldescriptionerror").hide();
+            }
+        }
+        $(document).ready(function () {
+            if ($('#Published').is(":checked")) {
+                $("#showtestimonialsrow").show();
+                $("#showhomerow").show();
+            }
+            else {
+                $("#showtestimonialsrow").hide();
+                $("#showhomerow").hide();
+            }
+            $('#Published').change(function () {
+                if ($(this).is(":checked")) {
+                    $("#showtestimonialsrow").show();
+                    $("#showhomerow").show();
+                }
+                else {
+                    $("#showtestimonialsrow").hide();
+                    $("#showhomerow").hide();
+                }
+            });
+        });
+    </script>
+</head>
+</html>
+
+
+
+@using (Html.BeginForm("Edit", "MyTestimonial", FormMethod.Post, new { id = "addform", enctype = "multipart/form-data" }))
+{
+    <div class="section-header">
+        <div class="title">
+            <img src="~/Administration/Content/images/ico_testimonial.png" />
+            Edit Testimonial Details <a href="@Url.Action("Manage", "MyTestimonial")">(back to testimonial list)</a>
+        </div>
+        @*<input type="button" id="btnback" value="Cancel" class="k-button" style="float: right" onclick="location.href='@Url.Action("Manage", "MyTestimonial")'"/>*@
+        @*<input type="button" id="btncontinue" value="Save and Continue Edit" class="k-button" style="float: right" onclick="location.href='@Url.Action("SaveAndContinue", "MyTestimonial")'"/>*@
+        <input type="submit" id="btnadd" value="Save" class="k-button" style="float: right; margin-right: 5px" /><br />
+        <br />
+        <br />
+    </div>
+    
+    
+        
+    <table style="width: 100%">
+        <tr>
+            <td style="width: 10%"></td>
+            <td style="float: right"></td>
+        </tr>
+        <tr>
+            <td class="adminTitle" style="width: 15%">
+                <div>
+                    <img title="A client name." src="~/Administration/Content/images/ico-help.gif" alt="A client name.">
+               
+                         @Html.LabelFor(x => x.ClientName):
+
+                </div>
+            </td>
+            <td style="width: 10%" class="adminData">
+                <div>
+                    @*@Html.TextBoxFor(Model => Model.ClientName)*@
+                    @Html.EditorFor(model => model.ClientName, new { @width = "250px" })
+                </div>
+            </td>
+            <td>
+                @Html.ValidationMessageFor(model => model.ClientName)
+            </td>
+        </tr>
+    </table>
+    <table style="width: 100%">
+        <tr>
+            <td class="adminTitle" style="vertical-align: middle; padding-top: 6px; width: 15%">
+                <div>
+                    <img title="Description of testimonial." src="~/Administration/Content/images/ico-help.gif" alt="Description of testimonial.">
+                    @Html.LabelFor(model => model.Description):
+                </div>
+            </td>
+
+            <td class="adminData" style="width: 10%">
+                <div>
+                    @*@Html.TextBoxFor(Model => Model.description)*@
+                    @*@Html.TextAreaFor(Model => Model.description,new { @class= "ckeditor" })*@
+                    @*@Html.EditorFor(Model => Model.description, "RichEditor")*@
+                    @Html.TextAreaFor(model => model.Description, new { style = "Width: 500px; Height: 150px;" })
+                    @*@Html.ValidationMessageFor(Model => Model.description)*@
+                </div>
+            </td>
+            <td style="vertical-align: top">
+                @Html.ValidationMessageFor(model => model.Description)
+                @*<span class="field-validation-error"><label id="lbldescriptionerror">Description is required.</label></span>*@
+            </td>
+        </tr>
+        <tr>
+            <td class="adminTitle" style="width: 15%">
+                <div>
+                    <img src="~/Administration/Content/images/ico-help.gif">
+                    User Image : 
+                </div>
+            </td>
+            @*<td>
+               <img src="~/content/images/default-image.png" width="300px" height="300px" />
+           </td>*@
+            <td style="width: 10%" class="adminData">
+                <div>
+
+                    @if (string.IsNullOrEmpty(Model.ImagePath))
+                    {
+                        <img src="@Url.Content("~/content/images/default-image.png")" />
+                    }
+                    else
+                    {
+                        <img src= "@Url.Content("~/"+ Model.ImagePath)" alt="Image" />
+                    }
+
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td class="adminTitle" style="width: 15%">
+                <div>
+                    <img src="~/Administration/Content/images/ico-help.gif">
+                    Change User Image : 
+                </div>
+            </td>
+            @*<td>
+               <img src="~/content/images/default-image.png" width="300px" height="300px" />
+           </td>*@
+            <td style="width: 10%" class="adminData">
+                <div>
+                    <input type="file" name="files" />
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <div class="adminTitle">
+                    <img title="The display order of this testimonial. Testimonials will be displayed in descending display order." src="~/Administration/Content/images/ico-help.gif" alt="The display order of this testimonial. Testimonials will be displayed in descending display order.">
+                    @Html.LabelFor(model => model.DisplayOrder):
+                </div>
+            </td>
+
+            <td>
+                @*<div class="k-input k-textbox">*@
+                @*<div class="k-numeric-wrap k-state-default">*@
+                <div class="adminData">
+                    @*@Html.TextBoxFor(Model => Model.date)*@
+                    @*@Html.TextBoxFor(Model => Model.date, new { @id = "datepicker" })*@
+                    @Html.EditorFor(model => model.DisplayOrder, new { @type = "number", @id = "displayorder" })
+                    @*<input type="number" />*@
+
+                </div>
+            </td>
+            <td>
+                @Html.ValidationMessageFor(model => model.DisplayOrder)
+            </td>
+        </tr>
+        <tr>
+            <td class="adminTitle" style="vertical-align: middle; padding-top: 6px; width: 15%">
+                <div>
+                    <img title="Determines whether this testimonial is published (visible) in testimonial page." src="~/Administration/Content/images/ico-help.gif" alt="Determines whether this testimonial is published (visible) in testimonial page.">
+                    @*@Html.LabelFor(Model => Model.Title)*@
+                    @Html.LabelFor(model => model.Published):
+                </div>
+            </td>
+            <td class="adminTitle" style="vertical-align: middle; padding-top: 6px; width: 15%">
+                @*<div class="k-input k-textbox">*@
+                <div>
+                    @*@Html.TextBoxFor(Model => Model.Title)*@
+                    @Html.EditorFor(model => model.Published)
+
+                </div>
+            </td>
+            <td>
+                @Html.ValidationMessageFor(model => model.Published)
+            </td>
+        </tr>
+        <tr id="showtestimonialsrow">
+            <td class="adminTitle" style="vertical-align: middle; padding-top: 6px; width: 15%">
+                <div>
+                    <img title="Determines whether this testimonial is published (visible) in testimonial page." src="~/Administration/Content/images/ico-help.gif" alt="Description of testimonial.">
+                    @Html.LabelFor(model => model.PublishedOnTestimonials):
+                </div>
+            </td>
+
+            <td style="vertical-align: middle; padding-top: 6px; width: 15%" class="adminData">
+                <div>
+                    @Html.EditorFor(model => model.PublishedOnTestimonials, new { style = "Width: 500px; Height: 150px;" })
+                </div>
+            </td>
+            <td style="vertical-align: top">
+                @Html.ValidationMessageFor(model => model.PublishedOnTestimonials)
+            </td>
+        </tr>
+        <tr id="showhomerow">
+            <td class="adminTitle" style="vertical-align: middle; padding-top: 6px; width: 15%">
+                <div>
+                    <img title="Check if you want to show testimonial on home page slider." src="~/Administration/Content/images/ico-help.gif" alt="Check if you want to show testimonial on home page slider.">
+                    @*@Html.LabelFor(Model => Model.Title)*@
+                    @Html.LabelFor(model => model.ShowOnHome):
+                </div>
+            </td>
+            <td style="vertical-align: middle; padding-top: 6px; width: 15%">
+                @*<div class="k-input k-textbox">*@
+                <div>
+                    @*@Html.TextBoxFor(Model => Model.Title)*@
+                    @Html.EditorFor(model => model.ShowOnHome)
+
+                </div>
+            </td>
+            <td>
+                @Html.ValidationMessageFor(model => model.ShowOnHome)
+            </td>
+        </tr>
+    </table>
+    <table>
+    </table>
+    
+}
+
+@*<div class="form-group">
+    @Html.NopLabelFor(Model => Model.CustomerName)
+    @Html.TextBoxFor(Model => Model.CustomerName, new { @class = "form-control" })
+    @Html.ValidationMessageFor(Model => Model.CustomerName)
+</div>*@
+@*<div class="form-group">
+    @Html.NopLabelFor(Model => Model.CustomerEmail)
+    @Html.TextBoxFor(Model => Model.CustomerEmail, new { @class = "form-control" })
+    @Html.ValidationMessageFor(Model => Model.CustomerEmail)
+</div>
+@Html.HiddenFor(Model => Model.ProductName)*@

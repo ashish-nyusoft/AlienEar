@@ -1,0 +1,501 @@
+﻿@model CategoryModel
+@{
+    var defaultGridPageSize = EngineContext.Current.Resolve<Nop.Core.Domain.Common.AdminAreaSettings>().DefaultGridPageSize;
+    var gridPageSizes = EngineContext.Current.Resolve<Nop.Core.Domain.Common.AdminAreaSettings>().GridPageSizes;
+}
+@*<p>
+    @T("Admin.Catalog.Products.PurchasedWithOrders.Hint")
+</p>*@
+<style>
+    .Error {
+        border: 1px solid #f00;
+    }
+</style>
+<script type="text/javascript">
+    function editClick(btn)
+    {
+        $(btn).parent("td").find(".update-color").show();
+        $(btn).hide();
+        $(btn).parent("td").prev("td").prev("td").find(".txtColorName").show();
+        $(btn).parent("td").prev("td").find(".txtColorCode").show();
+            
+        $(btn).parent("td").prev("td").prev("td").find(".color-name").hide();
+        $(btn).parent("td").prev("td").find(".color-code").hide();
+        
+    }
+    function updateClick(btn)
+    {
+        debugger;
+        var json={
+            colorId: $(btn).attr("data-id"),
+            ColorName: $(btn).parent("td").prev("td").prev("td").find(".txtColorName").val(),
+            ColorCode:$(btn).parent("td").prev("td").find(".txtColorCode").val()
+        };
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("EditColor","CustomizedColorAndImages")',//'Alienear37/CustomizedColorAndImages/DeleteColor',
+            data: { "colorId" : $(btn).attr("data-id"), "ColorName" : $(btn).parent("td").prev("td").prev("td").find(".txtColorName").val(), "ColorCode" : $(btn).parent("td").prev("td").find(".txtColorCode").val()},
+            dataType: 'json',
+            success: function (response) {
+                var grid = $("#Colors-grid").data("kendoGrid");
+                grid.dataSource.read();
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        });
+        $(btn).parent("td").find(".Edit-Color").show();
+        $(btn).hide();
+        $(btn).parent("td").prev("td").prev("td").find(".txtColorName").hide();
+        $(btn).parent("td").prev("td").find(".txtColorCode").hide();
+            
+        $(btn).parent("td").prev("td").prev("td").find(".color-name").show();
+        $(btn).parent("td").prev("td").find(".color-code").show();
+        
+    }
+    function deleteColor(colorId) {
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("DeleteColor","CustomizedColorAndImages")',//'Alienear37/CustomizedColorAndImages/DeleteColor',
+            data: { 'colorId' : colorId },
+            dataType: 'json',
+            success: function (response) {
+                var grid = $("#Colors-grid").data("kendoGrid");
+                grid.dataSource.read();
+            },
+            error: function (error) {
+            }
+        });
+    }
+    //function readURL(input) {
+    //    if (input.files && input.files[0]) {
+    //        var reader = new FileReader();            
+    //        reader.onload = function (e) {
+    //            $('#target').attr('src', e.target.result);
+    //            //console.log(e.target.result);
+    //        }
+            
+    //        reader.readAsDataURL(input.files[0]);
+    //        //console.log($("#target").attr("src"));
+    //    }
+    //}
+    //$(document).ready(function (){
+    //$(document).ready(function () {
+    //    $('#myform').ajaxForm();
+    //});
+    //var myVariable ;
+    ////var Asd = 'Helslo';
+    //$("#imgInp").change(function () {
+    //    var file = this.files[0];
+    //    fileName = file.name;
+    //    myVariable = file;
+    //    size = file.size;
+    //    type = file.type;
+    //    myVariable = file;
+    //    console.log(myVariable);
+    //});
+        
+        
+       
+            
+    //$(".btnSubmit").click(function (){
+    //    debugger;
+    //var formData = new FormData();
+    //var totalFiles = document.getElementById("imgInp").files.length;
+    //for (var i = 0; i < totalFiles; i++) {
+    //    var file = document.getElementById("imgInp").files[i];
+
+    //    formData.append("imgInp", file);
+    //}
+    // readURL($("#imgInp")[0]);
+    @*var formdata = new FormData(); //FormData object
+            var fileInput = document.getElementById('files');
+            //Iterating through each files selected in fileInput
+            for (i = 0; i < fileInput.files.length; i++) {
+                //Appending each file to FormData object
+                formdata.append(fileInput.files[i].name, fileInput.files[i]);
+            }
+            formdata.append('txtColorName',$("#txtColorName").val());
+            //Creating an XMLHttpRequest and sending
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', '@Url.Action("SaveColorMaster", "CustomizedColorAndImages")');
+            xhr.send(formdata);
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    alert(xhr.responseText);
+                }
+            }*@
+            
+
+    @*var fd = new FormData();
+            var file_data = $('input[type="file"]')[0].files; // for multiple files
+            for(var i = 0;i<file_data.length;i++){
+                fd.append("file_"+i, file_data[i]);
+            }
+            var other_data = $('form').serializeArray();
+            $.each(other_data,function(key,input){
+                fd.append(input.name,input.value);
+            });
+            $.ajax({
+                url: '@Url.Action("SaveColorMaster", "CustomizedColorAndImages")',
+                data: fd,
+                contentType: false,
+                processData: false,
+                type: 'POST',
+                success: function(data){
+                    console.log(data);
+                }
+            });*@
+    //    var
+    //json = {
+    //    ColorName: $("#txtColorName").val(),
+    //    imageByte: $("#target").attr("src")
+    //};
+    @*$.ajax({
+                type: 'POST',
+                url: '@Url.Action("SaveColorMaster", "CustomizedColorAndImages")',
+                url: "@Url.Action("GetColorMaster", "CustomizedColorAndImages")",
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                data : JSON.stringify(json),
+                success: function (data) {
+                    alert("done");
+                },
+                error: function (data) {
+                    alert(data.status  + " " + data.success);
+                    console.log("Error " + data.status + " " + data.success);
+                }
+             });*@
+                    @*$.ajax({
+
+                        url: "@Url.Action("SaveColorMaster", "CustomizedColorAndImages")",
+                dataType: "json",
+                type: "POST",
+                enctype: "multipart/form-data",
+                contentType: 'application/json; charset=utf-8',
+                data: JSON.stringify({ name: 'TestName', image: myVariable }),
+                async: true,
+                processData: false,
+                cache: false,
+                success: function (data) {
+                    alert(data);
+                },
+                error: function (xhr) {
+                    alert(xhr.errors);
+                    alert('error');
+                }*@
+    //});
+    //}
+    //});
+
+
+
+
+
+
+    $(document).ready(function (){
+
+        
+        //$('#imgInp').on('change', function (e) {
+        //    readURL($("#imgInp")[0])
+        //});
+        $('#txtColorName').blur(function () {
+            $("#colorname").hide();
+            debugger;
+            $.ajax({
+                type: "POST",
+                url:'@Url.Action("CheckColorName","CustomizedColorAndImages")',
+                data: {'colorName' : $("#txtColorName").val()  },
+                dataType: 'json',
+                success: function (data) {
+                    
+                    if(data == false)
+                    {
+                        console.log(data);
+                        $("#btnsave").prop('disabled', true);
+                        $("#chkcolorname").show();
+                    }
+                    else
+                    {
+                        $("#btnsave").prop('disabled', false);
+                        $("#chkcolorname").hide();
+                    }
+                    console.log(data);
+                },
+                error: function (error) {
+                    alert(error);
+                }
+            });
+        });
+        $('#txtColorCode').blur(function () {
+            $("#colorcode").hide();
+            $.ajax({
+                type: "POST",
+                url:'@Url.Action("CheckColorCode","CustomizedColorAndImages")',
+                data: {'code' : $("#txtColorCode").val()  },
+                dataType: 'json',
+                success: function (data) {
+                    
+                    if(data == false)
+                    {
+                        $("#colorcode").hide();
+                        $("#chkcolorcode").show();
+                        $("#btnsave").prop('disabled', true);
+                        //alert("This name is already exist.");
+                    }
+                    else
+                    {
+                        $("#btnsave").prop('disabled', false);
+                        $("#chkcolorcode").hide();
+                    }
+
+                },
+                error: function (error) {
+                }
+            });
+        });
+        $('.btnSubmit').click(function () {
+            
+            if ($('#chkcolorcode').css('display') == 'none' && $('#chkcolorname').css('display') == 'none') {
+             
+
+
+
+                //readURL($("#imgInp")[0])
+                //var files = e.target.files;
+                ////var myID = 3; //uncomment this to make sure the ajax URL works
+                //if (files.length > 0) {
+                //if (window.FormData !== undefined) {
+                //var data1 = new FormData();
+                //for (var x = 0; x < files.length; x++){
+                //    //data1.append("image" + x, files[x]);
+                //}
+                //console.log(data1);
+                //debugger;
+                //$.ajax({
+                //    type: "Get",
+                //    url:'/CustomizedColorAndImages/GetColorMaster1',
+                //    data: { "name" : $("#txtColorName").val() , "image" : files } ,                        //data: data1,
+                //        success: function(result) {
+                //            console.log(result);
+                //        },
+                //        error: function (xhr, status, p3, p4){
+                //            var err = "Error " + " " + status + " " + p3 + " " + p4;
+                //            if (xhr.responseText && xhr.responseText[0] == "{")
+                //                err = JSON.parse(xhr.responseText).Message;
+                //            console.log(err);
+                //        }
+                //    });
+                //} else {
+                //    alert("This browser doesn't support HTML5 file uploads!");
+                //}
+                debugger;
+            
+                var  name= $("#txtColorName").val();
+                // var image= $("#target").attr("src");
+                var ColorCode = $("#txtColorCode").val();
+                //$("#txtColorCode").removeClass('colorcode');
+                //$("#txtColorName").removeClass('colorname');
+
+                $("#colorname").hide();
+                $("#colorcode").hide();
+                if(name != "" && ColorCode != "")
+                {
+            
+                    //var formData = new FormData();
+                    //var file = document.getElementById("imgInp").files[0];
+                    //formData.append("image", $("#imgInp").file);
+                    $.ajax({
+                        type: "POST",
+                        url: '@Url.Action("SaveColorMaster","CustomizedColorAndImages")',//'/CustomizedColorAndImages/SaveColorMaster',
+                        data: {'name' : name , 'image' : ColorCode },
+                        dataType: 'json',
+                        success: function (response) {
+                            //var fileopen = document.getElementById("imgInp");
+                            //fileopen.value=null;
+
+                            $("#txtColorName").val("");
+                            $("#txtColorName").focus();
+                            $("#txtColorCode").val("");
+                            var grid = $("#Colors-grid").data("kendoGrid");
+                            grid.dataSource.read();
+                        },
+                        error: function (error) {
+                        }
+                    });
+
+                    //var xhr = new XMLHttpRequest;
+                    //xhr.open('post', '/CustomizedColorAndImages/GetColorMaster1?name='+ $("#txtColorName").val(), true);
+                    //xhr.send();
+                }
+                else
+                {
+                    if(name == "")
+                    {
+                        //$("#txtColorName").addClass('colorname').fadeOut().fadeIn();
+                        $("#colorname").show();
+                    }
+               
+                    if(ColorCode == "")
+                    {
+                        //$("#txtColorCode").addClass('colorcode').fadeOut().fadeIn();
+                        $("#colorcode").show();
+                    }
+                }
+            }
+        });
+    });
+</script>
+<style>
+    .colorname,.colorcode {
+        border:1px solid #f00;
+    }
+</style>
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <table class="adminContent">
+        <tbody>
+            <tr>
+                <td class="adminTitle">
+                    <img title="Color Name." src="/Administration/Content/images/ico-help.gif" alt="The product identifier.">
+                    <label title="The product identifier." for="Id">Color name</label>:
+                </td>
+                <td class="adminData ">
+                    <input type="text" id="txtColorName"  />
+                    <span id="colorname"  style="display:none;color:#f00;">Please provide a color name.</span>
+                    <span id="chkcolorname"  style="display:none;color:#f00;">This color name is already exist.</span>
+                </td>
+            </tr>
+            <tr>
+                <td class="adminTitle">
+                    <img title="Color Code." src="/Administration/Content/images/ico-help.gif" alt="The product identifier.">
+                    <label title="The product identifier." for="Id">Color code</label>:
+                </td>
+                <td class="adminData">
+                    @*<input type="file" id="imgInp" />*@
+                    <input type="text" id="txtColorCode" />
+                    <span id="colorcode"  style="display:none;color:#f00;">Please provide a color code.</span>
+                    <span id="chkcolorcode"  style="display:none;color:#f00;">This color code is already exist.</span>
+                </td>
+            </tr>
+            <tr>
+
+                <td>
+                    <input id="btnsave" type="button" class="k-button btnSubmit" value="Save" />
+                </td>
+            </tr>
+        </tbody>
+    </table>
+}
+<img id="target" style="display: none;" src="#" alt="your image" />
+<div id="Colors-grid"></div>
+<script>
+    $(document).ready(function () {
+        //$(".Edit-Color").click(function (){
+        //    debugger;
+        //    $(this).parent("td").prev("td").prev("td").find(".txtColorName").show();
+        //    $(this).parent("td").prev("td").find(".txtColorCode").show();
+            
+        //    $(this).parent("td").prev("td").prev("td").find(".color-name").hide();
+        //    $(this).parent("td").prev("td").find(".color-code").hide();
+
+
+        //});
+        //$(".update-color").click(function (){
+        //    $(this).parent("td").prev("td").prev("td").find(".txtColorName").hide();
+        //    $(this).parent("td").prev("td").find(".txtColorCode").hide();
+            
+        //    $(this).parent("td").prev("td").prev("td").find(".color-name").show();
+        //    $(this).parent("td").prev("td").find(".color-code").show();
+        //});
+        $("#Colors-grid").kendoGrid({
+            dataSource: {
+                type: "json",
+                transport: {
+                    read: {
+                        url: "@Url.Action("GetColorMaster", "CustomizedColorAndImages")",
+                        type: "POST",
+                        dataType: "json",
+                        data: addAntiForgeryToken
+                        //data: additionalData()
+                    }
+                },
+                schema: {
+                    
+                    data: "Data",
+                    total: "Total",
+                    errors: "Errors"
+                },
+                error: function(e) {
+                    display_kendoui_grid_error(e);
+                    // Cancel the changes
+                    this.cancelChanges();
+                },
+                pageSize: @(defaultGridPageSize),
+                serverPaging: true,
+                serverFiltering: true,
+                serverSorting: true
+            },
+            pageable: {
+                refresh: true,
+                pageSizes: [@(gridPageSizes)]
+            },
+            editable: {
+                confirmation: false,
+                mode: "inline"
+            },
+            scrollable: false,
+            //dataBound: onDataBound,
+            columns: [
+                @*{
+                field: "ColorId",
+                title: "@T("Admin.ColorMaster.Fields.ColorId")",
+                width: 50,
+                template: '<input type="checkbox" data-id="#=ColorId#" />'
+            }   
+                ,*@
+                {
+                    field: "ColorName",
+                    title: "@T("Admin.ColorMaster.Fields.ColorName")",
+                    width: 200,
+                    template:'<span class="color-name">#=ColorName#</span><input type="text" class="txtColorName" value="#=ColorName#" />'
+                },
+            
+            {
+                field: "ColorImage",
+                title: "@T("Admin.ColorMaster.Fields.ColorImage")",
+                width: 100,
+                template:'<span class="color-code">#=ColorImage#</span><input type="text" class="txtColorCode" value="#=ColorImage#" />'
+                //template: '<img src="#=ColorImage#" />',
+            },
+            {
+                field: "ColorId",
+                title: "@T("Admin.Common.Edit")",
+                width: 100,
+                template: '<input type="button" class="update-color k-button"  data-id="#=ColorId#" style=" text-decoration: none;" onClick="updateClick(this)" value="@T("Admin.Common.Update")" /><input type="button" class="Edit-Color k-button"  data-id="#=ColorId#" onClick="editClick(this)" style="  text-decoration: none;" value="@T("Admin.Common.Edit")" />'                
+            },
+            {
+                field: "ColorId",
+                title: "@T("Admin.Common.Delete")",
+                width: 100,
+                template: '<input type="button" class="k-button"  data-id="#=ColorId#" style=" text-decoration: none;" onClick="deleteColor(#=ColorId#)" value="@T("Admin.Common.Delete")" />'                
+            }
+            ]
+        });
+
+        function additionalData() {
+            var data = {
+                productId: '@Model.Id'
+            };
+            addAntiForgeryToken(data);
+            return data;
+        }
+    });
+</script>
+<style>
+    .update-color,.txtColorName ,.txtColorCode{
+        display:none;
+    }
+</style>

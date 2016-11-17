@@ -1,0 +1,221 @@
+﻿@model IList<CategoryModel>
+
+@using Nop.Web.Models.Catalog;
+@if (Model.Count > 0)
+{
+    
+@*<div class="category-grid home-page-category-grid">
+        <div class="item-grid">*@
+    int i = 0;
+    //foreach (var item in Model)
+    for (int j = 0; j < Model.Count; j++)
+    {
+        if (j != (Model.Count - 1))
+        {
+            if (i == 0)
+            {
+    <div class="center-content">
+        <div class="wrapper cross-arrow color-1 color-1-mobile">
+            <div class="content_wrap_01">
+                <div class="wrap">
+                    <div class="master-wrapper-content">
+                        <div class="item-box">
+                            <div class="category-item">
+                               
+                                <div class="picture">
+                                    <a href="@Url.RouteUrl("Category", new { SeName = Model[j].SeName })" title="@Model[j].PictureModel.Title">
+                                        <img alt="@Model[j].PictureModel.AlternateText" src="@Model[j].PictureModel.ImageUrl" title="@Model[j].PictureModel.Title" />
+                                    </a>
+                                </div>
+                                <div class="title_include">
+                                 <h2 class="title">
+                                    <a href="@Url.RouteUrl("Category", new { SeName = Model[j].SeName })" title="@Model[j].PictureModel.Title">
+                                        @Model[j].Name
+                                    </a>
+                                </h2>
+                                <a class="view_products" href="@Url.RouteUrl("Category", new { SeName = Model[j].SeName })" title="@Model[j].PictureModel.Title">view products
+                                </a>
+                                    </div>
+                            </div>
+                        </div>
+                        <div class="middle">
+                            <img src="~/Themes/DefaultClean/Content/images/motitors-line.png" />
+                            @*<img src="~/Themes/DefaultClean/Content/images/motitors-line.png" />*@
+                        </div>
+                        @{
+                j++;
+                i++;
+                        }
+                        <div class="item-box item-box-right">
+                            <div class="category-item">
+                                 <div class="picture">
+                                    <a href="@Url.RouteUrl("Category", new { SeName = Model[j].SeName })" title="@Model[j].PictureModel.Title">
+                                        <img alt="@Model[j].PictureModel.AlternateText" src="@Model[j].PictureModel.ImageUrl" title="@Model[j].PictureModel.Title" />
+                                    </a>
+                                </div>
+                                <div class="title_include_02">
+                                <h2 class="title">
+                                    <a href="@Url.RouteUrl("Category", new { SeName = Model[j].SeName })" title="@Model[j].PictureModel.Title">
+                                        @Model[j].Name
+                                    </a>
+                                </h2>                              
+<a class="view_products" href="@Url.RouteUrl("Category", new { SeName = Model[j].SeName })" title="@Model[j].PictureModel.Title">view products
+                                </a>
+                                    </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="clear"></div>
+    </div>
+            }
+            else
+            {
+@*<div class="full-bg-1">*@
+   
+    <div class="center-content">
+        <div class="wrapper cross-arrow color-2">
+            <div class="content_wrap_02">
+                <div class="wrap">
+                    <div class="master-wrapper-content">
+                        <div class="item-box">
+                            <div class="category-item">
+                                  <div class="picture">
+                                    <a href="@Url.RouteUrl("Category", new { SeName = Model[j].SeName })" title="@Model[j].PictureModel.Title">
+                                        <img alt="@Model[j].PictureModel.AlternateText" src="@Model[j].PictureModel.ImageUrl" title="@Model[j].PictureModel.Title" />
+                                    </a>
+                                </div>
+                                 <div class="title_include">
+                                <h2 class="title">
+                                    <a href="@Url.RouteUrl("Category", new { SeName = Model[j].SeName })" title="@Model[j].PictureModel.Title">
+                                        @Model[j].Name
+                                    </a>
+                                </h2>
+                                 <a class="view_products" href="@Url.RouteUrl("Category", new { SeName = Model[j].SeName })" title="@Model[j].PictureModel.Title">view products
+                                </a>
+                                     <div class="clear"></div>
+                                     </div>
+                              
+
+                               
+                            </div>
+                        </div>
+                        <div class="middle">
+                            <img src="~/Themes/DefaultClean/Content/images/middle_gray_line.png" />
+                            @*<img src="~/Themes/DefaultClean/Content/images/motitors-line.png" />*@
+                        </div>
+
+                        @{
+                j++;
+                i = 0;
+                        }
+                        <div class="item-box item-box-right">
+                            <div class="category-item">
+                                 <div class="picture">
+                                    <a href="@Url.RouteUrl("Category", new { SeName = Model[j].SeName })" title="@Model[j].PictureModel.Title">
+                                        <img alt="@Model[j].PictureModel.AlternateText" src="@Model[j].PictureModel.ImageUrl" title="@Model[j].PictureModel.Title" />
+                                    </a>
+                                </div>
+                                  <div class="title_include_02">
+                                <h2 class="title">
+                                    <a href="@Url.RouteUrl("Category", new { SeName = Model[j].SeName })" title="@Model[j].PictureModel.Title">
+                                        @Model[j].Name
+                                    </a>
+                                </h2>
+                                       <a class="view_products" href="@Url.RouteUrl("Category", new { SeName = Model[j].SeName })" title="@Model[j].PictureModel.Title">view products
+                                </a>
+                                      </div>
+                               
+
+                               
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+ <div class="clear"></div>
+    </div>
+         
+            }
+        }
+        else
+        {
+            if (i == 0)
+            {
+@*<div class="full-bg-1">*@
+    <div class="center-content">
+       <div class="wrapper cross-arrow color-1">
+            <div class="content_wrap_01 content_wrap_03">
+                <div class="wrap">
+                    <div class="master-wrapper-content">
+                        <div class="item-box">
+                            <div class="category-item">
+                               <div class="last"><h2 class="title">
+                                    <a href="@Url.RouteUrl("Category", new { SeName = Model[j].SeName })" title="@Model[j].PictureModel.Title">
+                                        @Model[j].Name
+                                    </a>
+                                </h2>
+                                   <div class="middle">
+                                       <img src="~/Themes/DefaultClean/Content/images/last-item-mid.png" /> 
+                                   </div>
+                                 <div class="picture">
+                                    <a href="@Url.RouteUrl("Category", new { SeName = Model[j].SeName })" title="@Model[j].PictureModel.Title">
+                                        <img alt="@Model[j].PictureModel.AlternateText" src="@Model[j].PictureModel.ImageUrl" title="@Model[j].PictureModel.Title" />
+                                    </a>
+                                </div>
+                                
+                               
+                                <div class="views_products">
+                                <a class="view_products" href="@Url.RouteUrl("Category", new { SeName = Model[j].SeName })" title="@Model[j].PictureModel.Title">view products
+                                </a></div>
+                            </div>
+                        </div>
+ </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+            }
+            else
+            {
+@*<div class="full-bg-1">*@
+    <div class="center-content">
+        <div class="wrapper cross-arrow color-1">
+            <div class="content_wrap_01">
+                <div class="wrap">
+                    <div class="master-wrapper-content">
+                        <div class="item-box">
+                            <div class="category-item">
+                                <h2 class="title">
+                                    <a href="@Url.RouteUrl("Category", new { SeName = Model[j].SeName })" title="@Model[j].PictureModel.Title">
+                                        @Model[j].Name
+                                    </a>
+                                </h2>
+                                <div class="picture">
+                                    <a href="@Url.RouteUrl("Category", new { SeName = Model[j].SeName })" title="@Model[j].PictureModel.Title">
+                                        <img alt="@Model[j].PictureModel.AlternateText" src="@Model[j].PictureModel.ImageUrl" title="@Model[j].PictureModel.Title" />
+                                    </a>
+                                </div>
+
+                                <a href="@Url.RouteUrl("Category", new { SeName = Model[j].SeName })" title="@Model[j].PictureModel.Title">view products
+                                </a>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+         
+            }
+        }
+
+    }
+@*</div>
+    </div>*@
+}

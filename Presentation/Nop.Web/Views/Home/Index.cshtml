@@ -1,0 +1,57 @@
+@{
+    //Layout = "~/Views/Shared/_ColumnsOne.cshtml";
+    Layout = "~/Views/Shared/HomeCateg_ColumnsOne.cshtml";
+}
+<div class="page home-page">
+    <div class="page-body">
+        @*@Html.Widget("home_page_top")*@
+
+        @*@Html.Widget("home_page_before_categories")*@
+        @Html.Action("HomepageCategories", "Catalog")
+        <div class="clear"></div>
+
+        <div id="mission_content" class="mission-content-main">
+          
+         <div class="master-wrapper-content">  <h2>Mission<span>&nbsp;Control</span></h2>  @Html.Action("TopicBlock", "Topic", new { systemName = "HomePageText" }) </div> 
+       </div>
+        @*@Html.Widget("home_page_before_products")
+        @Html.Action("HomepageProducts", "Product")*@
+        @*@Html.Widget("home_page_before_best_sellers")
+        @Html.Action("HomepageBestSellers", "Product")
+        @Html.Widget("home_page_before_news")
+        @Html.Action("HomePageNews", "News")*@
+        @*@Html.Widget("home_page_before_poll")
+        @Html.Action("HomePagePolls", "Poll")*@
+        @Html.Widget("home_page_bottom")
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="home-page-testimonial">@*homepage_testimonial_slider*@
+@Html.Widget("homepage_testimonial_slider")
+</div>@*homepage_testimonial_slider*@
+
+

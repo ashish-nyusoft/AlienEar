@@ -1,0 +1,38 @@
+﻿@model IList<productdetailsmodel.productattributemodel>
+@using Nop.Web.Models.Catalog;
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#product_attribute_24").change(function () {
+            $("#15-1").html($('#product_attribute_24 :selected').text());
+        });
+        $("#product_attribute_18").change(function () {
+            $("#10-1").html($('#product_attribute_18 :selected').text());
+        });
+        $("#product_attribute_20").change(function () {
+            $("#11-1").html($('#product_attribute_20 :selected').text());
+        });
+        $("#product_attribute_21").change(function () {
+            $("#12-1").html($('#product_attribute_21 :selected').text());
+        });
+    });
+
+</script>
+
+<div class="color-attributes">
+    <ul>
+        <li><b>Model : </b><span id="ProductName-1"></span></li>
+        @foreach (var attribute in Model)
+        {
+                string controlId = string.Format("product_attribute_{0}", attribute.Id);
+                string textPrompt = !string.IsNullOrEmpty(attribute.TextPrompt) ? attribute.TextPrompt : attribute.Name;
+                string attributename = attribute.Name;
+                string attributeValue = attribute.DefaultValue;
+                if (attribute.ProductAttributeId != 2 && attribute.ProductAttributeId != 18 && attribute.ProductAttributeId != 17 && attribute.ProductAttributeId != 14)
+                {
+            <li><b>@attributename.ToLower() : </b><span id="@attribute.ProductAttributeId-1">@attributeValue</span></li>
+                }
+            }
+    </ul>
+</div>

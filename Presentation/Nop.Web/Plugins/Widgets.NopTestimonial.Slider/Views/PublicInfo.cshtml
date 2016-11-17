@@ -1,0 +1,171 @@
+﻿@model IList<NyunopCommerce.Nop.Widgets.NopTestimonial.Slider.Models.TestimonialRecord>
+@using System;
+@using Nop.Core.Domain.Seo;
+@using Nop.Services.Localization;
+@using Nop.Web.Models.Catalog;
+@using Nop.Core.Plugins;
+@using Nop.Core.Domain.Cms;
+@using Nop.Services.Cms;
+@using Nop.Admin;
+@using Nop.Services.Configuration;
+@using NyunopCommerce.Nop.Widgets.NopTestimonial.Slider;
+@using Nop.Services.Stores;
+@using Nop.Web.Framework.Controllers;
+@using Nop.Core.Infrastructure;
+
+
+@{
+    var settingservice = EngineContext.Current.Resolve<ISettingService>();
+
+    var pluginmodel = settingservice.GetSettingByKey("mytestimonialsettings.showonhomepage", "null", 0, false);
+    var Testimonial = ViewBag.NyuNopTestimonial;
+}
+@*<script src="~/Themes/DefaultClean/Scripts/jquery.bxslider.min.js"></script>*@
+<script src="~/Themes/DefaultClean/Scripts/jquery.bxslider.js"></script>
+
+<link href="~/Themes/DefaultClean/Scripts/jquery.bxslider.css" rel="stylesheet" />
+<style>
+    .block {
+        max-width: 100%;
+        border: 1px solid #f6f6f6;
+        margin-top: 20px !important;
+    }
+
+    #itemContainer {
+    }
+
+    .dvname {
+        padding: 10px;
+    }
+
+    .testiTitle {
+        display: block;
+        margin: 10px 0;
+        background-color: #f6f6f6 !important;
+        padding: 5px 15px !important;
+        font-size: 10px;
+        font-weight: normal;
+        color: #444;
+        text-transform: uppercase;
+    }
+</style>
+@if (pluginmodel.Contains("True"))
+{
+    if (Model.Count() > 0)
+    {
+    <div class="block block-testimonial master-wrapper-content">
+
+        <div class="title testiTitle">
+            <h2>Transponder </h2>
+        </div>
+
+        <div class="bxslider">
+
+            @foreach (var items in Model)
+            { 
+                <div>
+                    @*<div style="border: solid; border-color: black; width: 95%; padding: 5px; margin: 5px" >*@
+                    <div id="itemContainer" class="">
+
+
+                        @*<label  id="CustomerName" style="text-transform: uppercase;" for="@items.ClientName">@items.ClientName</label>*@
+                        @*@if (ViewBag.DateEnable){<label  id="date" style="float:right" for="@items.date">@items.date</label><br />}*@
+                        @*</div>*@
+
+                        <div class="listbox">
+                            @*@if (ViewBag.TitleEnable)
+                    {
+                    <label  id="Title" for="@items.Title">@items.Title</label><br />
+                    }*@
+
+                            @*var description = "";*@
+
+                            @{
+                var description = "";
+                var dis = "";
+                if (items.Description != null)
+                {
+                    var descriptionvalue = items.Description;
+                    if (descriptionvalue.Length > 53)
+                    {
+                        description = descriptionvalue.Substring(0, 53) + "...";
+                    }
+                    else
+                    {
+                        description = descriptionvalue;
+                    }
+                    dis = description.Replace("\r\n", "<br/>");
+                }
+                       
+                            }
+                            @*int descriptionvalue = @items.description.Length;*@
+                            @*@if (description.Length > 53)
+                    {
+                        //description = descriptionvalue.Substring(0, 53) + "...";
+                        *@
+                            <div class="testimonialimg">
+                                <img src="@items.ImagePath" />
+                            </div>
+                            <div class="Testimonialslide">
+                                <label id="Title" for="description">@Html.Raw(dis)</label>
+                            </div>
+                            <br />
+                            @if (ViewBag.ClientName)
+                            {
+                                <div class="dvname">
+                                   <h5>By&nbsp  <label  id="CustomerName"  for=" @items.ClientName">@items.ClientName</label>&nbsp</h5>
+                                </div> }
+@*<label  id="Title" for="description">@Html.Raw(items.description).Substring(0, 53)+"..."</label><br />*@
+@*<label  id="Title" for="description">@items.description.Substring(0, 53)+"..."</label><br />*@
+@*}*@
+@*else
+                    {
+                        <label  id="descriptoin">@Html.Raw(items.description)</label>
+                    }*@
+
+                        </div>
+                    </div>
+
+                    @*</div>*@
+
+                </div>          
+            }
+
+            
+        </div>
+                <div id="prevSlide" >
+                    <img style="height:57px;width:54px; position:absolute; left:0px; top:50%;" src="/Themes/DefaultClean/Content/images/left-arrow.png" />
+                </div>
+                <div id="nextSlide" style="height:15px;width:15px;">
+                    <img style="height:57px;width:54px; position:absolute; right:0px; top:50%;" src="/Themes/DefaultClean/Content/images/right-arrow.png" />
+                </div>
+        <div class="clear"></div>
+    </div> 
+
+    }
+
+}
+<div>
+              
+            </div>
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        var slider = $('.bxslider').bxSlider();
+
+
+        $("#nextSlide").click(function (e) {
+            slider.goToNextSlide();
+            return false;
+
+        });
+        $("#prevSlide").click(function (e) {
+            slider.goToPrevSlide();
+            return false;
+
+        });
+
+
+
+    });
+</script>

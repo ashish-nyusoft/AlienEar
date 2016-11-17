@@ -1,0 +1,69 @@
+﻿@model OrderModel
+
+
+<table class="adminContent">
+    <tr>
+        <td  class="adminTitle">
+            <input type="hidden" id="hdnId" value="@Model.Id"/>
+             @Html.NopLabelFor(model => model.OrderNotes):
+            @*<label>OrderNotes :</label>*@
+        </td>
+        <td class="adminData">
+          @*   <input type="text" id="txtordernotes"/>*@
+            @Html.TextAreaFor(model => model.OrderNotes)
+            @*@Html.ValidationMessageFor(model => model.OrderNotes)*@
+        </td>
+    </tr>
+    <tr>
+        <td  class="adminTitle">
+        @*<label>CustomerNotes :</label>*@
+            @Html.NopLabelFor(model => model.CustomerNotes):
+        </td>
+        <td class="adminData">
+            @*<input type="text" id="txtCustomerNotes" />*@
+            @Html.TextAreaFor(model => model.CustomerNotes)
+            @*@Html.ValidationMessageFor(model => model.CustomerNotes)*@
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2" align="left">
+            <input type="button" id="addOrderNoteNew" class="k-button" value="@T("Admin.Orders.TabNew.AddButton")" />
+        </td>
+    </tr>
+</table>
+
+<script type="text/javascript">
+    function Clear() {
+        $('#CustomerNotes').val('')
+        $('#OrderNotes').val('')
+    }
+
+    $('#addOrderNoteNew').click(function () {
+        debugger;
+        var isValid = true;
+        var orderNoteMessage = $("#@Html.FieldIdFor(model => model.OrderNotes)").val();
+        var customerNoteMessage = $("#@Html.FieldIdFor(model => model.CustomerNotes)").val();
+
+        if (isValid == true) {
+            var json = {
+                Id: $('#hdnId').val(),
+                OrderNotes: orderNoteMessage,
+                CustomerNotes: customerNoteMessage
+            }
+            addAntiForgeryToken(json);
+            $.ajax({
+                cache: false,
+                type: 'POST',
+                url: "@(Url.Action("SaveNotes", "Order"))",
+                data: json,
+            }).done(function (data) {
+                if (data == 1) {
+                    Clear()
+                }
+            }).error(function (jqXHR, textStatus, errorThrown) {
+                alert(errorThrown);
+            });
+        }
+    })
+</script>
+

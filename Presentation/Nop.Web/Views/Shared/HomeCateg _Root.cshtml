@@ -1,0 +1,48 @@
+﻿@{
+    Layout = "~/Views/Shared/_Root.Head.cshtml";
+    var routevalues = HttpContext.Current.Request.RequestContext.RouteData.Values;
+    bool sliderflag = false;
+
+    foreach (var item in routevalues)
+    {
+        if (item.Value == "Home")
+        {
+            sliderflag = true;
+        }
+    }
+}
+
+@Html.Widget("body_start_html_tag_after")
+@Html.Partial("_Notifications")
+@Html.Action("JavaScriptDisabledWarning", "Common")
+@Html.Partial("OldInternetExplorerWarning")
+
+<div class="master-wrapper-page">
+    @Html.Action("AdminHeaderLinks", "Common")
+    @Html.Partial("Header")
+    <script type="text/javascript">
+        AjaxCart.init(false, '.header-links .cart-qty', '.header-links .wishlist-qty', '#flyout-cart');
+    </script>
+    @*<div class="header-menu">
+        @Html.Action("TopMenu", "Catalog")
+    </div>*@
+    @if (sliderflag)
+    {
+        @Html.Widget("home_page_top")
+    }
+    @*<div class="master-wrapper-content">*@
+        @Html.Widget("content_before")
+
+        @if (IsSectionDefined("Breadcrumb"))
+        {
+            @RenderSection("Breadcrumb") 
+        }
+        <div class="master-column-wrapper">
+            @RenderBody()
+        </div>
+        @Html.Widget("content_after")
+    @*</div>*@
+    @Html.Action("Footer", "Common")
+</div>
+@Html.Action("EuCookieLaw", "Common")
+@Html.Widget("body_end_html_tag_before")

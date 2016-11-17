@@ -1,0 +1,984 @@
+@using Nop.Services.Configuration@*TestimonialLink*@
+@using Nop.Core.Plugins@*TestimonialLink*@
+@{@*TestimonialLink*@
+    var testimonialsettingservice = EngineContext.Current.Resolve<ISettingService>();
+    var testimonialpluginmodel = testimonialsettingservice.GetSettingByKey("mytestimonialsettings.showtestimonialpage", "null", 0, false);
+    var testimonialenablepluginmodel = testimonialsettingservice.GetSettingByKey("widgetsettings.activewidgetsystemnames", "null", 0, false);
+    var currentsoteid = Nop.Core.Infrastructure.EngineContext.Current.Resolve<Nop.Core.IStoreContext>().CurrentStore.Id;
+    var _pluginFinder = EngineContext.Current.Resolve<IPluginFinder>();
+    var pluginDescriptor = _pluginFinder.GetPluginDescriptorBySystemName("NyunopCommerce.Nop.Widgets.NopTestimonial.Slider", LoadPluginsMode.All);
+    bool flag = true;
+    if (pluginDescriptor.LimitedToStores.Count > 0)
+    {@*TestimonialLink*@
+    if (!pluginDescriptor.LimitedToStores.Contains(currentsoteid))
+    {@*TestimonialLink*@
+    flag = false;
+    }@*TestimonialLink*@
+    }@*TestimonialLink*@
+}@*TestimonialLink*@
+
+
+
+
+@model FooterModel
+@using Nop.Core
+@using Nop.Core.Domain.Tax
+@using Nop.Core.Infrastructure
+@using Nop.Web.Models.Common;
+
+
+
+<div class="footer">
+    @* <div class="footer-upper">*@
+    <div class="Footer-main-background-color">
+        
+    </div>
+    <div class="clear"></div>
+    <div class="footer-end-section">
+        
+        <div class="clear"></div>
+       <div class="master-wrapper-content">
+           <div class="video_left">
+                <div class="Video-Content">
+            
+<iframe width="420" height="315" src="https://www.youtube.com/embed/7TfyyIc04Ps" frameborder="0" allowfullscreen></iframe>
+       </div> </div>
+           <div class="footer-right">
+                      <div class="footer-links">
+           @* <ul class="list">*@
+                @* <li><a href="@Url.RouteUrl("HomePage")">@T("HomePage")</a></li>*@
+                <ul class="list">
+                    <li><a href="@Url.RouteUrl("HomePage")">@T("Home")</a></li>
+                    <li><a href="/monitors">Monitors</a></li>
+                    <li><a href="/wireless">Wireless</a></li>
+                    <li><a href="/earplug">Earplug</a></li>
+                    <li><a href="/parts">Parts</a></li>
+                    <li><a href="/trade-in">Trade In</a></li>
+                    @*@if (Model.NewProductsEnabled)
+                    {
+                        <li><a href="@Url.RouteUrl("NewProducts")">Products</a></li>
+                    }*@
+                    @foreach (var topic in Model.Topics.Where(x => x.IncludeInFooterColumn1).ToList())
+                    {
+                        <li><a href="@Url.RouteUrl("Topic", new { SeName = topic.SeName })">@topic.Name</a></li>
+                    }
+                    <li><a href="@Url.RouteUrl("ContactUs")">@T("ContactUs")</a></li>
+             
+@if (testimonialpluginmodel.Contains("True") && testimonialenablepluginmodel.Contains("NyunopCommerce.Nop.Widgets.NopTestimonial.Slider") && flag){<li><a href="~/testimonials">Transponder</a></li>}</ul>
+
+               
+           @* </ul>*@
+        </div>
+ <div class="footer-social follow-us">
+            <div class="social">
+                <ul class="networks">
+                    @if (!string.IsNullOrEmpty(Model.FacebookLink))
+                    {
+                        <li class="facebook"><a href="@Model.FacebookLink" target="_blank">@T("Footer.FollowUs.Facebook")</a></li>
+                    }
+                    @if (!string.IsNullOrEmpty(Model.TwitterLink))
+                    {
+                        <li class="twitter"><a href="@Model.TwitterLink" target="_blank">@T("Footer.FollowUs.Twitter")</a></li>
+                    }
+                   @* @if (Model.NewsEnabled)
+                    {
+                        <li class="rss"><a href="@Url.RouteUrl("NewsRSS", new { languageId = Model.WorkingLanguageId })">@T("Footer.FollowUs.RSS")</a></li>
+                    }*@
+                    @if (!string.IsNullOrEmpty(Model.YoutubeLink))
+                    {
+                        <li class="youtube"><a href="@Model.YoutubeLink" target="_blank">@T("Footer.FollowUs.Youtube")</a></li>
+                    }
+                   @* @if (!string.IsNullOrEmpty(Model.GooglePlusLink))
+                    {
+                        <li class="google-plus"><a href="@Model.GooglePlusLink" target="_blank">@T("Footer.FollowUs.GooglePlus")</a></li>
+                    }*@
+                </ul>
+            </div>
+        </div>
+        <div class="clear"></div>
+        
+
+                  </div>
+
+
+    </div>
+
+        <div class="clear"></div>
+        <div class="footer-copyrights">
+            <div class="footer-lower">
+                <div class="footer-info">
+                    <span class="footer-disclaimer">@T("Content.CopyrightNotice", DateTime.Now.Year, Model.StoreName)</span>
+                    @if (Model.DisplayTaxShippingInfoFooter)
+                    {
+                        var inclTax = EngineContext.Current.Resolve<IWorkContext>().TaxDisplayType == TaxDisplayType.IncludingTax;
+                        <span class="footer-tax-shipping">
+                            @T(inclTax ? "Footer.TaxShipping.InclTax" : "Footer.TaxShipping.ExclTax", Url.RouteUrl("Topic", new { SeName = Html.GetTopicSeName("shippinginfo") }))
+                        </span>
+                    }
+                </div>
+                @*@if (!Model.HidePoweredByNopCommerce)
+                {
+                    <div class="footer-powered-by">
+                        Powered by <a href="http://www.nopcommerce.com/">nopCommerce</a>
+                    </div>
+                }
+                @Html.Action("StoreThemeSelector", "Common")*@
+            </div>
+            @Html.Widget("footer")
+            <div class="clear"></div>
+        </div>
+    </div>
+
+
+            </div>
+
+        
+       
+    </div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('.footer-block .title').click(function () {
+            var e = window, a = 'inner';
+            if (!('innerWidth' in window)) {
+                a = 'client';
+                e = document.documentElement || document.body;
+            }
+            var result = { width: e[a + 'Width'], height: e[a + 'Height'] };
+            if (result.width < 769) {
+                $(this).siblings('.list').slideToggle('slow');
+            }
+        });
+    });
+</script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('.block .title').click(function () {
+            var e = window, a = 'inner';
+            if (!('innerWidth' in window)) {
+                a = 'client';
+                e = document.documentElement || document.body;
+            }
+            var result = { width: e[a + 'Width'], height: e[a + 'Height'] };
+            if (result.width < 1001) {
+                $(this).siblings('.listbox').slideToggle('slow');
+            }
+        });
+    });
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

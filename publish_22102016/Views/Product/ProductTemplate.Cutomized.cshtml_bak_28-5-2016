@@ -1,0 +1,464 @@
+﻿@model ProductDetailsModel
+@using Nop.Core
+@using Nop.Core.Domain.Seo;
+@using Nop.Core.Infrastructure;
+@using Nop.Services.Localization;
+@using Nop.Web.Models.Catalog;
+@{
+    Layout = "~/Views/Shared/_ColumnsOne.cshtml";
+
+    //title, meta
+    Html.AddTitleParts(!String.IsNullOrEmpty(Model.MetaTitle) ? Model.MetaTitle : Model.Name);
+    Html.AddMetaDescriptionParts(Model.MetaDescription);
+    Html.AddMetaKeywordParts(Model.MetaKeywords);
+
+    var seoSettings = EngineContext.Current.Resolve<SeoSettings>();
+
+    //canonical URL
+    if (seoSettings.CanonicalUrlsEnabled)
+    {
+        var productUrl = Url.RouteUrl("Product", new { SeName = Model.SeName }, this.Request.Url.Scheme);
+        Html.AddCanonicalUrlParts(productUrl);
+    }
+
+    //open graph META tags
+    if (seoSettings.OpenGraphMetaTags)
+    {
+        var storeName = EngineContext.Current.Resolve<IStoreContext>().CurrentStore.GetLocalized(x => x.Name);
+        Html.AddHeadCustomParts("<meta property=\"og:type\" content=\"product\" />");
+        Html.AddHeadCustomParts("<meta property=\"og:title\" content=\"" + Html.Encode(Model.Name) + "\" />");
+        Html.AddHeadCustomParts("<meta property=\"og:description\" content=\"" + Html.Encode(Model.MetaDescription) + "\" />");
+        Html.AddHeadCustomParts("<meta property=\"og:image\" content=\"" + Model.DefaultPictureModel.ImageUrl + "\" />");
+        Html.AddHeadCustomParts("<meta property=\"og:url\" content=\"" + Request.Url.AbsoluteUri + "\" />");
+        Html.AddHeadCustomParts("<meta property=\"og:site_name\" content=\"" + Html.Encode(storeName) + "\" />");
+    }
+
+    //Twitter META tags
+    if (seoSettings.TwitterMetaTags)
+    {
+        var storeName = EngineContext.Current.Resolve<IStoreContext>().CurrentStore.GetLocalized(x => x.Name);
+        Html.AddHeadCustomParts("<meta property=\"twitter:card\" content=\"summary\" />");
+        Html.AddHeadCustomParts("<meta property=\"twitter:site\" content=\"" + Html.Encode(storeName) + "\" />");
+        Html.AddHeadCustomParts("<meta property=\"twitter:title\" content=\"" + Html.Encode(Model.Name) + "\" />");
+        Html.AddHeadCustomParts("<meta property=\"twitter:description\" content=\"" + Html.Encode(Model.MetaDescription) + "\" />");
+        Html.AddHeadCustomParts("<meta property=\"twitter:image\" content=\"" + Model.DefaultPictureModel.ImageUrl + "\" />");
+        Html.AddHeadCustomParts("<meta property=\"twitter:url\" content=\"" + Request.Url.AbsoluteUri + "\" />");
+    }
+}
+
+
+
+<script>
+
+    //jQuery(function ($) {
+    //    $('#product-form').validate({
+    //        rules: {},
+    //        messages: {},
+    //        submitHandler: function () {
+    //            return false
+    //        }
+    //    });
+    //    $('input[name^="LeftImage"]').rules('add', {
+    //        required: true,
+    //        accept: "image/jpeg, image/pjpeg"
+    //    })
+    //    $('input[name^="RightImage"]').rules('add', {
+    //        required: true,
+    //        accept: "image/jpeg, image/pjpeg"
+    //    })
+
+    //});
+
+    function lcolormanage(img) {
+        console.log($(img).attr("data-src"));
+        $('.leftImage img').attr('src',  $(img).attr("data-src"));
+    }
+    function rcolormanage(img) {
+        console.log($(img).attr("data-src"));
+        $('.rightImage img').attr('src',  $(img).attr("data-src"));
+    }
+    function allcolormanage(img) {
+        console.log($(img).attr("data-src"));
+        $('.rightImage img').attr('src',$(img).attr("data-rsrc"));
+        $('.leftImage img').attr('src',  $(img).attr("data-lsrc"));
+    }
+    $(document).ready(function () {
+
+        $('#checkbox1').change(function () {
+            if ($(this).is(":checked")) {
+                var returnVal = confirm("Are you sure?");
+                $(this).attr("checked", returnVal);
+            }
+            $('#textbox1').val($(this).is(':checked'));
+        });
+        //$(".LeftEarImage").click(function () {
+        //    debugger;
+        //    $('.leftImage img').attr('src', $(this).attr("data-src"));
+        //});
+        //$(".RightEarImage").click(function () {
+        //    debugger;
+        //    $('.rightImage img').attr('src', $(this).attr("data-src"));
+        //});
+
+        $("#toggal").change(function () {
+            debugger;
+            if (this.checked) {
+                $('.leftImage img').attr('src',  $("#all li div:first").attr("data-lsrc"));
+                $('.rightImage img').attr('src',  $("#all li div:first").attr("data-rsrc"));
+
+                $(".single").show();
+                $(".comm").hide();
+            }
+            else {
+                $('.leftImage img').attr('src',  $("#all li div:first").attr("data-lsrc"));
+                $('.rightImage img').attr('src', $("#all li div:first").attr("data-rsrc"));
+                $(".comm").show();
+                $(".single").hide();
+            }
+
+        });
+    });
+    $(document).ready(function () {
+        debugger;
+        @*$.ajax({
+            type: 'POST',
+            url: '@Url.Action("GetColors", "CustomizedProduct", new { productID = Model.Id })',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+        }).done(function (data) {
+            console.log("Ashish " + data);
+        });*@
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("GetColorsAll", "CustomizedProduct", new { productID = Model.Id })',
+            contentType: 'application/json',
+            dataType: 'json',
+            async: false,
+            success: function (data) {
+                //console.log("Ashish " + data.length);
+                //$("#LeftRar").empty();
+                //$("#RightEar").empty();
+                for (var i = 0 ; i < data.length; i++) {
+                    $("#all").append("<li><div style='background-color:" + data[i].main + " ;border-radius: 100px;height: 25px;width: 25px;'  class='LeftEarImage' data-rsrc='/Alienear37" + data[i].right + "' data-lsrc='/Alienear37" + data[i].left + "' onClick='allcolormanage(this);' ></div></li>");
+                    //$("#RightEar").append("<li><img src='" + data[i].main + "' class='RightEarImage' data-src='" + data[i].right + "'  onClick='rcolormanage(this);' /></li>");
+                }
+                //for (var j = 0 ; j < data.length; j++) {
+                //    $("#RightEar").append("<li><img src='' class='RightEarImage' data-src='' /></li>");
+                //}
+            },
+            error: function (data) {
+                console.log("Error " + data.status + " " + data.success);
+            }
+        });
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("GetColors", "CustomizedProduct", new { productID = Model.Id })',
+            contentType: 'application/json',
+            dataType: 'json',
+            async: false,
+            success: function (data) {
+                //alert("<li><div style='background-color:" + data[0].main + " ;border-radius: 100px;height: 25px;width: 25px;' class='LeftEarImage' data-src='" + data[0].left + "' onClick='lcolormanage(this);' ></div></li>");
+                //console.log("Ashish " + data.length);
+                //$("#LeftRar").empty();
+                //$("#RightEar").empty();
+
+                for (var i = 0 ; i < data.length; i++) {
+                    $("#LeftRar").append("<li><div style='background-color:" + data[i].main + " ;border-radius: 100px;height: 25px;width: 25px;' class='LeftEarImage' data-src='/Alienear37" + data[i].left + "' onClick='lcolormanage(this);' ></div></li>");
+                    $("#RightEar").append("<li><div style='background-color:" + data[i].main + " ;border-radius: 100px;height: 25px;width: 25px;' class='RightEarImage' data-src='/Alienear37" + data[i].right + "'  onClick='rcolormanage(this);' ></div></li>");
+                }
+                //for (var j = 0 ; j < data.length; j++) {
+                //    $("#RightEar").append("<li><img src='' class='RightEarImage' data-src='' /></li>");
+                //}
+                
+            },
+            error: function (data) {
+                alert(data);
+                console.log("Error " + data.status + " " + data.success);
+            }
+        });
+        $('.leftImage img').attr('src', $("#all li div:first").attr("data-lsrc"));
+        $('.rightImage img').attr('src', $("#all li div:first").attr("data-rsrc"));
+    });
+
+</script>
+@*<script>
+    $(function () {
+        $("#tabs").tabs();
+    });
+  </script>*@
+<!--product breadcrumb-->
+@*@section Breadcrumb
+{
+    @Html.Partial("_ProductBreadcrumb", Model.Breadcrumb)
+}*@
+@*@Html.Widget("productdetails_after_breadcrumb", Model.Id)*@
+<div class="page product-details-page">
+    <div class="page-body">
+        @Html.Widget("productdetails_top", Model.Id)
+        @using (Html.BeginRouteForm("Product", new { SeName = Model.SeName }, FormMethod.Post, new { id = "product-details-form" }))
+        {
+            <div itemscope itemtype="http://schema.org/Product" data-productid="@Model.Id">
+                <div class="product-essential">
+                    @Html.Widget("productdetails_before_pictures", Model.Id)
+                    <!--product pictures-->
+                    @*@Html.Partial("_CustomizedProductDetailsPictures", Model)*@
+                    @Html.Widget("productdetails_after_pictures", Model.Id)
+                    @*<div class="overview">*@
+                    <div>
+                        @Html.Partial("_Discontinued", Model)
+                        <div class="product-name">
+                            <h1 itemprop="name">
+                                @Model.Name
+                            </h1>
+                        </div>
+
+
+
+                        <script>
+                            $(function () {
+                                $("#tabs").tabs({ active: 0 });
+
+                                //{
+                                //	cache: false,
+                                //	load:function(event,ui) {
+                                //		var index = $(ui.tab).parent().index();
+
+                                //		console.log(index);
+                                //	}
+                                //});
+                            });
+                        </script>
+                        <div id="tabs">
+                            <ul>
+                                <li><a href="#tabs-1">specifications</a></li>
+                                <li><a href="#tabs-2">choose color</a></li>
+                                <li><a href="#tabs-3">Choose Case and Cable</a></li>
+
+                            </ul>
+                            <div id="tabs-1" class="tab1">
+                                @Html.Partial("_ProductSpecifications", Model.ProductSpecifications)
+                            </div>
+                            <div id="tabs-2" class="tab1">
+                                <div class="left-part">
+                                    <span>Choose color</span>
+                                    @*<input type="checkbox" id="toggal" />*@
+                                    <div class="comm" style="display: none;">
+
+                                        <div>
+                                            <ul id="all">
+                                            </ul>
+                                        </div>
+                                    </div>
+
+                                    <div class="single">
+                                        <div>
+                                            <label class="text-prompt">
+                                                Left Ear
+                                            </label>
+
+                                            <div>
+
+                                                <ul id="RightEar">
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        (Free) Custome Color Upgrade<input type="text" placeholder="EnterColor" />
+                                        <div>
+                                            <label class="text-prompt">
+                                                Right Ear 
+                                            </label>
+
+                                            <div>
+                                                <ul id="LeftRar">
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        (Free) Custome Color Upgrade<input type="text" placeholder="EnterColor" />
+                                    </div>
+                                    @{
+            var dataDictAttributes = new ViewDataDictionary();
+            dataDictAttributes.TemplateInfo.HtmlFieldPrefix = string.Format("attributes_{0}", Model.Id);
+                                        @Html.Partial("_ProductAttributes1", Model.ProductAttributes, dataDictAttributes)
+                                    }
+                                </div>
+                                <div class="right-part">
+                                    @Html.Partial("_CustomizedProductDetailsPictures", Model)
+                                    <span id="Next-tab-change">Next</span>
+                                </div>
+                            </div>
+                            <div id="tabs-3" class="tab1">
+                                @{
+            var dataDictAttributes1 = new ViewDataDictionary();
+            dataDictAttributes.TemplateInfo.HtmlFieldPrefix = string.Format("attributes_{0}", Model.Id);
+                                    @Html.Partial("_ProductAttributes", Model.ProductAttributes, dataDictAttributes1)
+                                }
+                                @Html.Partial("_CustomizedProductDetailsPictures", Model)
+                                <!--price & add to cart-->
+                                @{
+            var dataDictPrice = new ViewDataDictionary();
+            dataDictPrice.TemplateInfo.HtmlFieldPrefix = string.Format("price_{0}", Model.Id);
+                                    @Html.Partial("_ProductPrice", Model.ProductPrice, dataDictPrice)
+
+                                    @Html.Partial("_ProductTierPrices", Model.TierPrices)
+
+            var dataDictAddToCart = new ViewDataDictionary();
+            dataDictAddToCart.TemplateInfo.HtmlFieldPrefix = string.Format("addtocart_{0}", Model.Id);
+                                    @Html.Partial("_CutomizedAddToCart", Model.AddToCart, dataDictAddToCart)
+                                }
+                            </div>
+                        </div>
+
+
+
+                        @*@if (!String.IsNullOrEmpty(Model.ShortDescription))
+                        {
+                            <div class="short-description">
+                                @Html.Raw(Model.ShortDescription)
+                            </div>
+                        }
+@Html.Widget("productdetails_overview_top", Model.Id)
+                        <!--product reviews-->
+                        @Html.Partial("_ProductReviewOverview", Model.ProductReviewOverview)
+                        <!--manufacturers-->
+                        @Html.Partial("_ProductManufacturers", Model.ProductManufacturers)
+                        <!--availability-->
+                        @Html.Partial("_Availability", Model)
+                        <!--SKU, MAN, GTIN, vendor-->
+                        @Html.Partial("_SKU_Man_GTIN_Ven", Model)
+                        <!--delivery-->
+                        @Html.Partial("_DeliveryInfo", Model)
+                        <!--sample download-->
+                        @Html.Partial("_DownloadSample", Model)*@
+                        <!--attributes-->
+                        @*ashish*@
+                        @*<div id="tabs">
+                            <ul>
+                                <li><a href="#tabs-1">CHOOSE COLOR</a></li>
+                                <li><a href="#tabs-2">CHOOSE CASE AND CABLE</a></li>
+                            </ul>
+                            <div id="tabs-1">*@
+                        @*<input type="checkbox" id="toggal" />
+                        <div class="comm">
+
+                            <div>
+                                <ul id="all">
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="single" style="display: none;">
+                            <div>
+                                <label class="text-prompt">
+                                    Left Ear
+                                </label>
+
+                                <div>
+
+                                    <ul id="RightEar">
+                                    </ul>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="text-prompt">
+                                    Right Ear 
+                                </label>
+
+                                <div>
+                                    <ul id="LeftRar">
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>*@
+                        @*</div>*@
+                        @*<div id="tabs-2">
+                            </div>*@
+                        @*</div>*@
+
+
+                        @* <script>
+                            $(function () {
+                                $("#tabs").tabs();
+                            });
+                        </script>*@
+                        @*end*@
+                        @* @{
+                        var dataDictAttributes = new ViewDataDictionary();
+                        dataDictAttributes.TemplateInfo.HtmlFieldPrefix = string.Format("attributes_{0}", Model.Id);
+                            @Html.Partial("_ProductAttributes", Model.ProductAttributes, dataDictAttributes)
+                        }*@
+                        <!--gift card-->
+                        @* @{
+                        var dataDictGiftCard = new ViewDataDictionary();
+                        dataDictGiftCard.TemplateInfo.HtmlFieldPrefix = string.Format("giftcard_{0}", Model.Id);
+                            @Html.Partial("_GiftCardInfo", Model.GiftCard, dataDictGiftCard)
+                        }
+                        <!--rental info-->
+                        @{
+                        var dataDictRental = new ViewDataDictionary();
+                        dataDictRental.TemplateInfo.HtmlFieldPrefix = string.Format("rental_{0}", Model.Id);
+                            @Html.Partial("_RentalInfo", Model, dataDictRental)
+                        }
+                        
+                        <!--wishlist, compare, email a friend-->
+                        <div class="overview-buttons">
+                            @Html.Widget("productdetails_inside_overview_buttons_before", Model.Id)
+                            @{
+                        var dataDictAddToWishlist = new ViewDataDictionary();
+                        dataDictAddToWishlist.TemplateInfo.HtmlFieldPrefix = string.Format("addtocart_{0}", Model.Id);
+                                @Html.Partial("_AddToWishlist", Model.AddToCart, dataDictAddToWishlist)
+                            }
+                            @Html.Partial("_CompareProductsButton", Model)
+                            @Html.Partial("_ProductEmailAFriendButton", Model)
+                            @Html.Widget("productdetails_inside_overview_buttons_after", Model.Id)
+                        </div>
+                        @Html.Partial("_ShareButton", Model)
+                        @Html.Widget("productdetails_overview_bottom", Model.Id)
+                    </div>
+                    @if (!String.IsNullOrEmpty(Model.FullDescription))
+                    {
+                        <div class="full-description" itemprop="description">
+                            @Html.Raw(Model.FullDescription)
+                        </div>
+                    }*@
+                    </div>
+                    @* @Html.Widget("productdetails_before_collateral", Model.Id)
+                <div class="product-collateral">
+                    @Html.Partial("_ProductSpecifications", Model.ProductSpecifications)
+                    @Html.Partial("_ProductTags", Model.ProductTags)
+                </div>
+                @Html.Action("ProductsAlsoPurchased", "Product", new { productId = Model.Id })
+                @Html.Action("RelatedProducts", "Product", new { productId = Model.Id })*@
+                </div>
+            </div>
+        }
+        @*@Html.Widget("productdetails_bottom", Model.Id)*@
+    </div>
+</div>
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#product_attribute_label_28").hide();
+        $("#product_attribute_label_30").hide();
+        //$("#product_attribute_label_29").hide();
+        //$("#product_attribute_input_29").hide();
+
+
+        //server Change
+
+        //$("#product_attribute_label_29").hide();
+        //$("#product_attribute_input_30").hide();
+
+        //end
+          
+        $("#Next-tab-change").click(function () {
+            //debugger;
+            //var index = $('#tabs a[href="#tabs-2"]').parent().index();
+            //$('#tabs').tabs('select', index);
+            $("#tabs").tabs({ active: 2 });
+            $('html, body').animate({
+                scrollTop: $("#tabs").offset().top
+            }, 500);
+        });
+    });
+</script>

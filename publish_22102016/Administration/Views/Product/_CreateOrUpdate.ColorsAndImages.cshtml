@@ -1,0 +1,414 @@
+﻿@model ProductModel.CustomizedImageModel
+@{
+    var defaultGridPageSize = EngineContext.Current.Resolve<Nop.Core.Domain.Common.AdminAreaSettings>().DefaultGridPageSize;
+    var gridPageSizes = EngineContext.Current.Resolve<Nop.Core.Domain.Common.AdminAreaSettings>().GridPageSizes;
+}
+
+<script>
+    $(document).ready(function () {
+        //$(".chksingle").attr('disabled', 'disabled');
+        $(".rightFile").on('change', function () {
+            var allowedFiles = [".png", ".jpg", ".jpeg"];
+            var fileUpload = $(this);
+            //var lblError = $("#lblError");
+            var regex = new RegExp("([a-zA-Z0-9\s_\\.\-:])+(" + allowedFiles.join('|') + ")$");
+            if (!regex.test(fileUpload.val().toLowerCase())) {
+                alert("Please upload files having extensions: <b>" + allowedFiles.join(', ') + "</b> only.");
+                $(this).val("");
+                return false;
+            }
+            //lblError.html('');
+            return true;
+        });
+        $(".leftFile").on('change', function () {
+            var allowedFiles = [".png", ".jpg", ".jpeg"];
+            var fileUpload = $(this);
+            //var lblError = $("#lblError");
+            var regex = new RegExp("([a-zA-Z0-9\s_\\.\-:])+(" + allowedFiles.join('|') + ")$");
+            if (!regex.test(fileUpload.val().toLowerCase())) {
+                alert("Please upload files having extensions: <b>" + allowedFiles.join(', ') + "</b> only.");
+                $(this).val("");
+                return false;
+            }
+            //lblError.html('');
+            return true;
+        });
+    });
+    function deleteColor(btnDelete) {
+        //debugger;
+        var
+    json = {
+        id: $(btnDelete).attr("data-productID")
+    };
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("DeleteColorImage", "CustomizedColorAndImages")',
+            contentType: 'application/json',
+            dataType: 'json',
+            data: JSON.stringify(json),
+            async: false,
+            success: function (data) {
+                $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("GetColorMasterWithImageOfProduct", "CustomizedColorAndImages", new { productId = Model.ProductID })',
+                    contentType: 'application/json',
+                    dataType: 'json',
+                    async: false,
+                    success: function (response) {
+                        $("#UploadColorsImages tbody").empty();
+                        var cnt = $("#UploadColorsImages tbody tr").length;
+                        for (var i = 0; i < response.length ; i++) {
+                            //debugger;
+                            var status = 0;
+                            var isSingle = 0;
+                            if (response[i].ImageLeftEar == null) {
+                                status = 1;
+                            }
+                            if (response[i].ImageIdividualFlag == true) {
+                                isSingle = 1;
+                            }
+                            if (cnt != "0") {
+                                if (status == 0) {
+                                    if (isSingle == 1) {
+
+                                        //$("#UploadColorsImages tbody tr:last").after("<tr><td style='display:none'><input type='hidden' value='" + response[i].ColorID + "' name='item.AlienearColorMaster.ColorId' id='item_AlienearColorMaster_ColorId' data-val-number='The field ColorId must be a number.' data-val='true'><input class='chkselect' data-id='" + response[i].ColorID + "' type='checkbox' id='chkSelect" + response[i].ColorID + "' data-status='old' disabled /></td><td>" + response[i].ColorID + "</td><td><input type='checkbox' name='item.ImageIdividualFlag'  class='chksingle' id='chkSingle" + response[i].ColorID + "' value='true'  checked /><input type='hidden' value='false' name='item.ImageIdividualFlag'></td><td><div style='background-color: " + response[i].AlienearColorMaster.ColorImage + ";height:25px;width: 25px;'></div></td><td>" + response[i].AlienearColorMaster.ColorName + "</td><td>" + response[i].AlienearColorMaster.ColorImage + "</td><td><img src='/Alienear37" + response[i].ImageLeftEar + "' /></td><td><img src='/Alienear37" + response[i].ImageRightEar + "' /></td><td><input type='button' class='k-button' class='colorDelete' value='Delete' /></td></tr>");
+                                        $("#UploadColorsImages tbody tr:last").after("<tr><td style='display:none'><input type='hidden' value='" + response[i].ColorID + "' name='item.AlienearColorMaster.ColorId' id='item_AlienearColorMaster_ColorId' data-val-number='The field ColorId must be a number.' data-val='true'><input class='chkselect' data-id='" + response[i].ColorID + "' type='checkbox' id='chkSelect" + response[i].ColorID + "' data-status='old' disabled /></td><td>" + response[i].ColorID + "</td><td><input type='checkbox' name='item.ImageIdividualFlag'  class='chksingle' id='chkSingle" + response[i].ColorID + "' value='true'  checked /><input type='hidden' value='false' name='item.ImageIdividualFlag'></td><td><div style='background-color: " + response[i].AlienearColorMaster.ColorImage + ";height:25px;width: 25px;'></div></td><td>" + response[i].AlienearColorMaster.ColorName + "</td><td>" + response[i].AlienearColorMaster.ColorImage + "</td><td><img src='../../.." + response[i].ImageLeftEar + "' /></td><td><img src='../../.." + response[i].ImageRightEar + "' /></td><td><input type='button' class='k-button colorDelete' value='Delete' onClick='deleteColor(this)' data-productID='" + response[i].ImageId + "' /></td></tr>");
+                                    }
+                                    else {
+                                        //$("#UploadColorsImages tbody tr:last").after("<tr><td style='display:none'><input type='hidden' value='" + response[i].ColorID + "' name='item.AlienearColorMaster.ColorId' id='item_AlienearColorMaster_ColorId' data-val-number='The field ColorId must be a number.' data-val='true'><input class='chkselect' data-id='" + response[i].ColorID + "' type='checkbox' id='chkSelect" + response[i].ColorID + "' data-status='old' disabled /></td><td>" + response[i].ColorID + "</td><td><input type='checkbox' name='item.ImageIdividualFlag'  class='chksingle' id='chkSingle" + response[i].ColorID + "' value='true'  /><input type='hidden' value='false' name='item.ImageIdividualFlag'></td><td><div style='background-color: " + response[i].AlienearColorMaster.ColorImage + ";height:25px;width: 25px;'></div></td><td>" + response[i].AlienearColorMaster.ColorName + "</td><td>" + response[i].AlienearColorMaster.ColorImage + "</td><td><img src='/Alienear37" + response[i].ImageLeftEar + "' /></td><td><img src='/Alienear37" + response[i].ImageRightEar + "' /></td><td><input type='button' class='k-button' class='colorDelete' value='Delete' /></td></tr>");
+                                        $("#UploadColorsImages tbody tr:last").after("<tr><td style='display:none'><input type='hidden' value='" + response[i].ColorID + "' name='item.AlienearColorMaster.ColorId' id='item_AlienearColorMaster_ColorId' data-val-number='The field ColorId must be a number.' data-val='true'><input class='chkselect' data-id='" + response[i].ColorID + "' type='checkbox' id='chkSelect" + response[i].ColorID + "' data-status='old' disabled /></td><td>" + response[i].ColorID + "</td><td><input type='checkbox' name='item.ImageIdividualFlag'  class='chksingle' id='chkSingle" + response[i].ColorID + "' value='true'  /><input type='hidden' value='false' name='item.ImageIdividualFlag'></td><td><div style='background-color: " + response[i].AlienearColorMaster.ColorImage + ";height:25px;width: 25px;'></div></td><td>" + response[i].AlienearColorMaster.ColorName + "</td><td>" + response[i].AlienearColorMaster.ColorImage + "</td><td><img src='../../.." + response[i].ImageLeftEar + "' /></td><td><img src='../../.." + response[i].ImageRightEar + "' /></td><td><input type='button' class='k-button colorDelete' value='Delete' onClick='deleteColor(this)' data-productID='" + response[i].ImageId + "' /></td></tr>");
+                                    }
+                                }
+                                else {
+                                    if (isSingle == 1) {
+                                        //$("#UploadColorsImages tbody tr:last").after("<tr><input type='hidden' value='" + response[i].ColorID + "' name='item.AlienearColorMaster.ColorId' id='item_AlienearColorMaster_ColorId' data-val-number='The field ColorId must be a number.' data-val='true'><td style='display:none'><input class='chkselect' data-id='" + response[i].ColorID + "' type='checkbox' id='chkSelect" + response[i].ColorID + "' data-status='new' disabled checked /></td><td>" + response[i].ColorID + "</td><td><input type='checkbox' name='item.ImageIdividualFlag'  class='chksingle' id='chkSingle" + response[i].ColorID + "' value='true'   checked /><input type='hidden' value='false' name='item.ImageIdividualFlag'></td><td><div style='background-color: " + response[i].AlienearColorMaster.ColorImage + ";height:25px;width: 25px;'></div></td><td>" + response[i].AlienearColorMaster.ColorName + "</td><td>" + response[i].AlienearColorMaster.ColorImage + "</td><td><input type='file' name='LeftImage' class='leftFile' id='leftimage" + response[i].ColorID + "' /></td><td><input type='file' name='RightImage' class='rightFile' id='rightimage" + response[i].ColorID + "' /></td><td><input type='button' class='k-button' class='colorDelete' value='Delete' /></td></tr>");
+                                        $("#UploadColorsImages tbody tr:last").after("<tr><input type='hidden' value='" + response[i].ColorID + "' name='item.AlienearColorMaster.ColorId' id='item_AlienearColorMaster_ColorId' data-val-number='The field ColorId must be a number.' data-val='true'><td style='display:none'><input class='chkselect' data-id='" + response[i].ColorID + "' type='checkbox' id='chkSelect" + response[i].ColorID + "' data-status='new' disabled checked /></td><td>" + response[i].ColorID + "</td><td><input type='checkbox' name='item.ImageIdividualFlag'  class='chksingle' id='chkSingle" + response[i].ColorID + "' value='true'   checked /><input type='hidden' value='false' name='item.ImageIdividualFlag'></td><td><div style='background-color: " + response[i].AlienearColorMaster.ColorImage + ";height:25px;width: 25px;'></div></td><td>" + response[i].AlienearColorMaster.ColorName + "</td><td>" + response[i].AlienearColorMaster.ColorImage + "</td><td><input type='file' name='LeftImage' class='leftFile' id='leftimage" + response[i].ColorID + "' /></td><td><input type='file' name='RightImage' class='rightFile' id='rightimage" + response[i].ColorID + "' /></td><td></td></tr>");
+                                    }
+                                    else {
+                                        //$("#UploadColorsImages tbody tr:last").after("<tr><input type='hidden' value='" + response[i].ColorID + "' name='item.AlienearColorMaster.ColorId' id='item_AlienearColorMaster_ColorId' data-val-number='The field ColorId must be a number.' data-val='true'><td style='display:none'><input class='chkselect' data-id='" + response[i].ColorID + "' type='checkbox' id='chkSelect" + response[i].ColorID + "' data-status='new' disabled checked /></td><td>" + response[i].ColorID + "</td><td><input type='checkbox' name='item.ImageIdividualFlag'  class='chksingle' id='chkSingle" + response[i].ColorID + "' value='true'  /><input type='hidden' value='false' name='item.ImageIdividualFlag'></td><td><div style='background-color: " + response[i].AlienearColorMaster.ColorImage + ";height:25px;width: 25px;'></div></td><td>" + response[i].AlienearColorMaster.ColorName + "</td><td>" + response[i].AlienearColorMaster.ColorImage + "</td><td><input type='file' name='LeftImage' class='leftFile' id='leftimage" + response[i].ColorID + "' /></td><td><input type='file' name='RightImage' class='rightFile' id='rightimage" + response[i].ColorID + "' /></td><td><input type='button' class='k-button' class='colorDelete' value='Delete' /></td></tr>");
+                                        $("#UploadColorsImages tbody tr:last").after("<tr><input type='hidden' value='" + response[i].ColorID + "' name='item.AlienearColorMaster.ColorId' id='item_AlienearColorMaster_ColorId' data-val-number='The field ColorId must be a number.' data-val='true'><td style='display:none'><input class='chkselect' data-id='" + response[i].ColorID + "' type='checkbox' id='chkSelect" + response[i].ColorID + "' data-status='new' disabled checked /></td><td>" + response[i].ColorID + "</td><td><input type='checkbox' name='item.ImageIdividualFlag'  class='chksingle' id='chkSingle" + response[i].ColorID + "' value='true'  /><input type='hidden' value='false' name='item.ImageIdividualFlag'></td><td><div style='background-color: " + response[i].AlienearColorMaster.ColorImage + ";height:25px;width: 25px;'></div></td><td>" + response[i].AlienearColorMaster.ColorName + "</td><td>" + response[i].AlienearColorMaster.ColorImage + "</td><td><input type='file' name='LeftImage' class='leftFile' id='leftimage" + response[i].ColorID + "' /></td><td><input type='file' name='RightImage' class='rightFile' id='rightimage" + response[i].ColorID + "' /></td><td></td></tr>");
+                                    }
+                                }
+                            }
+                            else {
+                                if (status == 0) {
+                                    if (isSingle == 1) {
+                                        //$("#UploadColorsImages tbody").append("<tr><td style='display:none'><input type='hidden' value='" + response[i].ColorID + "' name='item.AlienearColorMaster.ColorId' id='item_AlienearColorMaster_ColorId' data-val-number='The field ColorId must be a number.' data-val='true'><input class='chkselect' type='checkbox' data-id='" + response[i].ColorID + "' id='chkSelect" + response[i].ColorID + "' data-status='old' disabled /></td><td>" + response[i].ColorID + "</td><td><input type='checkbox' class='chksingle' name='item.ImageIdividualFlag' id='chkSingle" + response[i].ColorID + "' value='true' checked /><input type='hidden' value='false' name='item.ImageIdividualFlag'></td><td><div style='background-color: " + response[i].AlienearColorMaster.ColorImage + ";height:25px;width: 25px;'></div></td><td>" + response[i].AlienearColorMaster.ColorName + "</td><td>" + response[i].AlienearColorMaster.ColorImage + "</td><td><img src='/Alienear37" + response[i].ImageLeftEar + "' /></td><td><img src='/Alienear37" + response[i].ImageRightEar + "' /></td><td><input type='button' class='k-button' class='colorDelete' value='Delete' /></td></tr>");
+                                        $("#UploadColorsImages tbody").append("<tr><td style='display:none'><input type='hidden' value='" + response[i].ColorID + "' name='item.AlienearColorMaster.ColorId' id='item_AlienearColorMaster_ColorId' data-val-number='The field ColorId must be a number.' data-val='true'><input class='chkselect' type='checkbox' data-id='" + response[i].ColorID + "' id='chkSelect" + response[i].ColorID + "' data-status='old' disabled /></td><td>" + response[i].ColorID + "</td><td><input type='checkbox' class='chksingle' name='item.ImageIdividualFlag' id='chkSingle" + response[i].ColorID + "' value='true' checked /><input type='hidden' value='false' name='item.ImageIdividualFlag'></td><td><div style='background-color: " + response[i].AlienearColorMaster.ColorImage + ";height:25px;width: 25px;'></div></td><td>" + response[i].AlienearColorMaster.ColorName + "</td><td>" + response[i].AlienearColorMaster.ColorImage + "</td><td><img src='../../.." + response[i].ImageLeftEar + "' /></td><td><img src='../../.." + response[i].ImageRightEar + "' /></td><td><input type='button' class='k-button colorDelete' value='Delete' onClick='deleteColor(this)' data-productID='" + response[i].ImageId + "' /></td></tr>");
+                                    }
+                                    else {
+                                        //$("#UploadColorsImages tbody").append("<tr><td style='display:none'><input type='hidden' value='" + response[i].ColorID + "' name='item.AlienearColorMaster.ColorId' id='item_AlienearColorMaster_ColorId' data-val-number='The field ColorId must be a number.' data-val='true'><input class='chkselect' type='checkbox' data-id='" + response[i].ColorID + "' id='chkSelect" + response[i].ColorID + "' data-status='new' disabled checked /></td><td>" + response[i].ColorID + "</td><td><input type='checkbox' class='chksingle' name='item.ImageIdividualFlag' id='chkSingle" + response[i].ColorID + "' value='true'  /><input type='hidden' value='false' name='item.ImageIdividualFlag'></td><td><div style='background-color: " + response[i].AlienearColorMaster.ColorImage + ";height:25px;width: 25px;'></div></td><td>" + response[i].AlienearColorMaster.ColorName + "</td><td>" + response[i].AlienearColorMaster.ColorImage + "</td><td><input type='file' class='leftFile' name='LeftImage' id='leftimage" + response[i].ColorID + "' /></td><td><input type='file' name='RightImage' class='rightFile' id='rightimage" + response[i].ColorId + "' /></td><td><input type='button' class='k-button' class='colorDelete' value='Delete' /></td></tr>");
+                                        $("#UploadColorsImages tbody").append("<tr><td style='display:none'><input type='hidden' value='" + response[i].ColorID + "' name='item.AlienearColorMaster.ColorId' id='item_AlienearColorMaster_ColorId' data-val-number='The field ColorId must be a number.' data-val='true'><input class='chkselect' type='checkbox' data-id='" + response[i].ColorID + "' id='chkSelect" + response[i].ColorID + "' data-status='old' disabled /></td><td>" + response[i].ColorID + "</td><td><input type='checkbox' class='chksingle' name='item.ImageIdividualFlag' id='chkSingle" + response[i].ColorID + "' value='true'  /><input type='hidden' value='false' name='item.ImageIdividualFlag'></td><td><div style='background-color: " + response[i].AlienearColorMaster.ColorImage + ";height:25px;width: 25px;'></div></td><td>" + response[i].AlienearColorMaster.ColorName + "</td><td>" + response[i].AlienearColorMaster.ColorImage + "</td><td><img src='../../.." + response[i].ImageLeftEar + "' /></td><td><img src='../../.." + response[i].ImageRightEar + "' /></td><td><input type='button' class='k-button colorDelete' value='Delete' onClick='deleteColor(this)' data-productID='" + response[i].ImageId + "' /></td></tr>");
+                                    }
+                                }
+                                else {
+                                    if (isSingle == 1) {
+                                        //$("#UploadColorsImages tbody").append("<tr><td style='display:none'><input type='hidden' value='" + response[i].ColorID + "' name='item.AlienearColorMaster.ColorId' id='item_AlienearColorMaster_ColorId' data-val-number='The field ColorId must be a number.' data-val='true'><input class='chkselect' type='checkbox' data-id='" + response[i].ColorID + "' id='chkSelect" + response[i].ColorID + "' data-status='new' disabled checked /></td><td>" + response[i].ColorID + "</td><td><input type='checkbox' class='chksingle' name='item.ImageIdividualFlag' id='chkSingle" + response[i].ColorID + "' value='true'  /><input type='hidden' value='false' name='item.ImageIdividualFlag'></td><td><div style='background-color: " + response[i].AlienearColorMaster.ColorImage + ";height:25px;width: 25px;'></div></td><td>" + response[i].AlienearColorMaster.ColorName + "</td><td>" + response[i].AlienearColorMaster.ColorImage + "</td><td><input type='file' class='leftFile' name='LeftImage' id='leftimage" + response[i].ColorID + "' /></td><td><input type='file' name='RightImage' class='rightFile' id='rightimage" + response[i].ColorId + "' /></td><td><input type='button' class='k-button' class='colorDelete' value='Delete' /></td></tr>");
+                                        $("#UploadColorsImages tbody").append("<tr><td style='display:none'><input type='hidden' value='" + response[i].ColorID + "' name='item.AlienearColorMaster.ColorId' id='item_AlienearColorMaster_ColorId' data-val-number='The field ColorId must be a number.' data-val='true'><input class='chkselect' type='checkbox' data-id='" + response[i].ColorID + "' id='chkSelect" + response[i].ColorID + "' data-status='new' disabled checked /></td><td>" + response[i].ColorID + "</td><td><input type='checkbox' class='chksingle' name='item.ImageIdividualFlag' id='chkSingle" + response[i].ColorID + "' value='true' checked /><input type='hidden' value='false' name='item.ImageIdividualFlag'></td><td><div style='background-color: " + response[i].AlienearColorMaster.ColorImage + ";height:25px;width: 25px;'></div></td><td>" + response[i].AlienearColorMaster.ColorName + "</td><td>" + response[i].AlienearColorMaster.ColorImage + "</td><td><input type='file' class='leftFile' name='LeftImage' id='leftimage" + response[i].ColorID + "' /></td><td><input type='file' name='RightImage' class='rightFile' id='rightimage" + response[i].ColorId + "' /></td><td></td></tr>");
+                                    }
+                                    else {
+                                        //$("#UploadColorsImages tbody").append("<tr><td style='display:none'><input type='hidden' value='" + response[i].ColorID + "' name='item.AlienearColorMaster.ColorId' id='item_AlienearColorMaster_ColorId' data-val-number='The field ColorId must be a number.' data-val='true'><input class='chkselect' type='checkbox' data-id='" + response[i].ColorID + "' id='chkSelect" + response[i].ColorID + "' data-status='new' disabled checked /></td><td>" + response[i].ColorID + "</td><td><input type='checkbox' class='chksingle' name='item.ImageIdividualFlag' id='chkSingle" + response[i].ColorID + "' value='true'  /><input type='hidden' value='false' name='item.ImageIdividualFlag'></td><td><div style='background-color: " + response[i].AlienearColorMaster.ColorImage + ";height:25px;width: 25px;'></div></td><td>" + response[i].AlienearColorMaster.ColorName + "</td><td>" + response[i].AlienearColorMaster.ColorImage + "</td><td><input type='file' class='leftFile' name='LeftImage' id='leftimage" + response[i].ColorID + "' /></td><td><input type='file' name='RightImage' class='rightFile' id='rightimage" + response[i].ColorId + "' /></td><td><input type='button' class='k-button' class='colorDelete' value='Delete' /></td></tr>");
+                                        $("#UploadColorsImages tbody").append("<tr><td style='display:none'><input type='hidden' value='" + response[i].ColorID + "' name='item.AlienearColorMaster.ColorId' id='item_AlienearColorMaster_ColorId' data-val-number='The field ColorId must be a number.' data-val='true'><input class='chkselect' type='checkbox' data-id='" + response[i].ColorID + "' id='chkSelect" + response[i].ColorID + "' data-status='new' disabled checked /></td><td>" + response[i].ColorID + "</td><td><input type='checkbox' class='chksingle' name='item.ImageIdividualFlag' id='chkSingle" + response[i].ColorID + "' value='true'  /><input type='hidden' value='false' name='item.ImageIdividualFlag'></td><td><div style='background-color: " + response[i].AlienearColorMaster.ColorImage + ";height:25px;width: 25px;'></div></td><td>" + response[i].AlienearColorMaster.ColorName + "</td><td>" + response[i].AlienearColorMaster.ColorImage + "</td><td><input type='file' class='leftFile' name='LeftImage' id='leftimage" + response[i].ColorID + "' /></td><td><input type='file' name='RightImage' class='rightFile' id='rightimage" + response[i].ColorId + "' /></td><td></td></tr>");
+                                    }
+                                }
+                                cnt = "1";
+                            }
+                        }
+                    },
+                    error: function (data) {
+                        console.log("Error " + data.status + " " + data.success);
+                    }
+                });
+            },
+            error: function (data) {
+                console.log("Error " + data.status + " " + data.success);
+            }
+        });
+
+
+
+    }
+
+
+
+    
+</script>
+
+
+
+@*<script>
+   function readURL(input, img) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                $("#" + img).attr('src', e.target.result);
+                //console.log(e.target.result);
+            }
+
+            reader.readAsDataURL(input.files[0]);
+            //console.log($("#target").attr("src"));
+        }
+    }
+    function velidateData(chk) {
+        debugger;
+        var val = $("#chkSelect" + $(chk).closest('td').prev('td:eq(0)').html()).prop("checked");
+        if (val == false) {
+            $("#chkSelect" + $(chk).closest('td').prev('td:eq(0)').html()).attr("data-status", "oldChange");
+        }
+    }
+
+    //$("#leftimage5").on("change", function (e) {
+    //    debugger;
+    //    var data = $($(this).attr("id") + "img");
+    //    if (data == null) {
+    //        $("#images").append("<img id='" + $(this).attr("id") + "img" + "' style='display: none;' />");
+    //    }
+    //    readURL($(this)[0], $(this).attr("id") + "img");
+    //});
+    //$(document).ready(function () {
+
+    //    $("#leftimage5").change(function () {
+    //        alert('changed!');
+    //    });
+    //});
+
+    $(document).ready(function () {
+
+
+
+
+
+        $("#btnSave").click(function () {
+            debugger;
+            var i = 0;
+            $(".chkselect:checked").each(function () {
+                var id = "";
+                //window.setTimeout(function () {
+                console.log("Id: " + $(".chkselect:checked:eq(" + i + ")").attr("data-id"));
+
+                id = $(".chkselect:checked:eq(" + i + ")").attr("data-id");
+                i = i + 1;
+                //}, 1000);
+                //console.log("Id: " + $(this).attr("data-id"));
+
+                var img1 = "#leftimage" + $(this).attr("data-id");
+                var img2 = "#rightimage" + $(this).attr("data-id");
+                if ($(img1)[0].value != "" && $(img2)[0].value != "") {
+                    window.setTimeout(function () {
+                        readURL($(img1)[0], "left");
+                    }, 1000);
+                    window.setTimeout(function () {
+                        readURL($(img2)[0], "right");
+                    }, 1000);
+                    var val = $("#chkSingle" + $(this).attr("data-id")).prop("checked");
+                    $.ajax({
+                        type: "POST",
+                        url: '/CustomizedColorAndImages/SaveImages',
+                        data: { 'productId': '@Model.Id', 'leftImage': $("#left").attr("src"), 'rightImage': $("#right").attr("src"), 'ColorId': id, 'flag': val },
+                        dataType: 'json',
+                        async: true,
+                        success: function (response) {
+                            $("#left").attr("src", "");
+                            $("#right").attr("src", "");
+                            val = "";
+                        },
+                        error: function (error) {
+                        }
+                    });
+                }
+            });
+        });
+    });
+
+
+
+
+    $(document).ready(function () {
+        $.ajax({
+            type: "POST",
+            url: '/CustomizedColorAndImages/GetColorMasterWithImageOfProduct',
+            data: { 'productId': '@Model.Id' },
+            dataType: 'json',
+            success: function (response) {
+                //alert(response.length);
+                var cnt = $("#UploadColorsImages tbody tr").length;
+                for (var i = 0; i < response.length ; i++) {
+                    debugger;
+                    var status = 0;
+                    var isSingle = 0;
+                    if (response[i].ImageLeftEar == null) {
+                        status = 1;
+                    }
+                    if (response[i].ImageIdividualFlag == true) {
+                        isSingle = 1;
+                    }
+                    if (cnt != "0") {
+                        if (status == 0) {
+                            if (isSingle == 1) {
+
+                                $("#UploadColorsImages tbody tr:last").after("<tr><td style='display:none'><input class='chkselect' data-id='" + response[i].ColorID + "' type='checkbox' id='chkSelect" + response[i].ColorID + "' data-status='old' disabled /></td><td>" + response[i].ColorID + "</td><td><input type='checkbox' onClick='velidateData(this)' class='chksingle' id='chkSingle" + response[i].ColorID + "'  checked /></td><td><div style='background-color: " + response[i].AlienearColorMaster.ColorImage + ";height:25px;width: 25px;'></div></td><td>" + response[i].AlienearColorMaster.ColorName + "</td><td>" + response[i].AlienearColorMaster.ColorImage + "</td><td><img src='" + response[i].ImageLeftEar + "' /></td><td><img src='" + response[i].ImageRightEar + "' /></td><td><input type='button' class='k-button' value='Delete' /></td></tr>")
+                            }
+                            else {
+                                $("#UploadColorsImages tbody tr:last").after("<tr><td style='display:none'><input class='chkselect' data-id='" + response[i].ColorID + "' type='checkbox' id='chkSelect" + response[i].ColorID + "' data-status='old' disabled /></td><td>" + response[i].ColorID + "</td><td><input type='checkbox' onClick='velidateData(this)' class='chksingle' id='chkSingle" + response[i].ColorID + "'  /></td><td><div style='background-color: " + response[i].AlienearColorMaster.ColorImage + ";height:25px;width: 25px;'></div></td><td>" + response[i].AlienearColorMaster.ColorName + "</td><td>" + response[i].AlienearColorMaster.ColorImage + "</td><td><img src='" + response[i].ImageLeftEar + "' /></td><td><img src='" + response[i].ImageRightEar + "' /></td><td><input type='button' class='k-button' value='Delete' /></td></tr>")
+                            }
+                        }
+                        else {
+                            if (isSingle == 1) {
+                                $("#UploadColorsImages tbody tr:last").after("<tr><td style='display:none'><input class='chkselect' data-id='" + response[i].ColorID + "' type='checkbox' id='chkSelect" + response[i].ColorID + "' data-status='new' disabled checked /></td><td>" + response[i].ColorID + "</td><td><input type='checkbox' onClick='velidateData(this)' class='chksingle' id='chkSingle" + response[i].ColorID + "'  checked /></td><td><div style='background-color: " + response[i].AlienearColorMaster.ColorImage + ";height:25px;width: 25px;'></div></td><td>" + response[i].AlienearColorMaster.ColorName + "</td><td>" + response[i].AlienearColorMaster.ColorImage + "</td><td><input type='file' name='leftFile' class='leftFile' id='leftimage" + response[i].ColorID + "' /></td><td><input type='file' name='rightFile' class='rightFile' id='rightimage" + response[i].ColorID + "' /></td><td><input type='button' class='k-button' value='Delete' /></td></tr>")
+                            }
+                            else {
+                                $("#UploadColorsImages tbody tr:last").after("<tr><td style='display:none'><input class='chkselect' data-id='" + response[i].ColorID + "' type='checkbox' id='chkSelect" + response[i].ColorID + "' data-status='new' disabled checked /></td><td>" + response[i].ColorID + "</td><td><input type='checkbox' onClick='velidateData(this)' class='chksingle' id='chkSingle" + response[i].ColorID + "'  /></td><td><div style='background-color: " + response[i].AlienearColorMaster.ColorImage + ";height:25px;width: 25px;'></div></td><td>" + response[i].AlienearColorMaster.ColorName + "</td><td>" + response[i].AlienearColorMaster.ColorImage + "</td><td><input type='file' name='leftFile' class='leftFile' id='leftimage" + response[i].ColorID + "' /></td><td><input type='file' name='rightFile' class='rightFile' id='rightimage" + response[i].ColorID + "' /></td><td><input type='button' class='k-button' value='Delete' /></td></tr>")
+                            }
+                        }
+                    }
+                    else {
+                        if (status == 0) {
+                            if (isSingle == 1) {
+                                $("#UploadColorsImages tbody").append("<tr><td style='display:none'><input class='chkselect' type='checkbox' data-id='" + response[i].ColorID + "' id='chkSelect" + response[i].ColorID + "' data-status='old' disabled /></td><td>" + response[i].ColorID + "</td><td><input type='checkbox' class='chksingle' onClick='velidateData(this)' id='chkSingle" + response[i].ColorID + "' checked /></td><td><div style='background-color: " + response[i].AlienearColorMaster.ColorImage + ";height:25px;width: 25px;'></div></td><td>" + response[i].AlienearColorMaster.ColorName + "</td><td>" + response[i].AlienearColorMaster.ColorImage + "</td><td><img src='" + response[i].ImageLeftEar + "' /></td><td><img src='" + response[i].ImageRightEar + "' /></td><td><input type='button' class='k-button' value='Delete' /></td></tr>")
+                            }
+                            else {
+                                $("#UploadColorsImages tbody").append("<tr><td style='display:none'><input class='chkselect' type='checkbox' data-id='" + response[i].ColorID + "' id='chkSelect" + response[i].ColorID + "' data-status='new' disabled checked /></td><td>" + response[i].ColorID + "</td><td><input type='checkbox' class='chksingle' onClick='velidateData(this)' id='chkSingle" + response[i].ColorID + "'  /></td><td><div style='background-color: " + response[i].AlienearColorMaster.ColorImage + ";height:25px;width: 25px;'></div></td><td>" + response[i].AlienearColorMaster.ColorName + "</td><td>" + response[i].AlienearColorMaster.ColorImage + "</td><td><input type='file' name='leftFile' class='leftFile' id='leftimage" + response[i].ColorID + "' /></td><td><input type='file' name='rightFile' class='rightFile' id='rightimage" + response[i].ColorId + "' /></td><td><input type='button' class='k-button' value='Delete' /></td></tr>")
+                            }
+                        }
+                        cnt = "1";
+                    }
+                }
+                //console.log(response);
+            },
+            error: function (error) {
+            }
+        });
+    });
+
+
+</script>*@
+@*<h1>Product Images</h1>*@
+
+
+@*<form method="post" enctype="multipart/form-data">*@
+<div id="resources-grid" class="k-grid k-widget" data-role="grid">
+    @*<div class="k-toolbar k-grid-toolbar"><a href="#" class="k-button k-button-icontext k-grid-add"><span class="k-icon k-add"></span>Add new record</a></div>*@
+    <table role="grid" id="UploadColorsImages">
+        <colgroup>
+            <col>
+            <col style="width: 100px">
+            <col style="width: 200px">
+        </colgroup>
+        <thead class="k-grid-header" role="rowgroup">
+            <tr role="row">
+                <th data-title="Product" data-field="Product2Name" role="columnheader" class="k-header" style="display: none">Select
+                </th>
+                <th data-title="Product" data-field="Product2Name" role="columnheader" class="k-header">No.
+                </th>
+                <th data-title="View" data-field="ProductId2" role="columnheader" class="k-header">IsSingle
+                </th>
+                <th data-title="View" data-field="ProductId2" role="columnheader" class="k-header">Color
+                </th>
+                <th data-title="View" data-field="ProductId2" role="columnheader" class="k-header">Color code
+                </th>
+                <th data-title="View" data-field="ProductId2" role="columnheader" class="k-header">Color name
+                </th>
+
+                <th data-title="View" data-field="ProductId2" role="columnheader" class="k-header">Left image
+                </th>
+                <th data-title="View" data-field="ProductId2" role="columnheader" class="k-header">Right image
+                </th>
+                <th class="k-header">Delete
+
+                </th>
+            </tr>
+        </thead>
+        <tbody role="rowgroup">
+            @foreach (var item in Model.ListData)
+            {
+                <tr>
+
+                    <td>
+                        @Html.HiddenFor(x => item.AlienearColorMaster.ColorId)
+                        @*@Html.LabelFor(x => x.AlienearColorMaster.ColorId,item.AlienearColorMaster.ColorId) *@
+                        @item.AlienearColorMaster.ColorId
+                    </td>
+                    <td>
+                        @*<input type="checkbox" name="item.ImageIdividualFlag" value="true" checked="@item.ImageIdividualFlag" />*@
+                        @*@if(item.ImageIdividualFlag)
+                        {*@
+                        @Html.CheckBox("item.ImageIdividualFlag", item.ImageIdividualFlag, new { @class="chksingle" })
+                        @*}*@
+                    </td>
+                    <td>
+
+                        @*<div style="height:25px;width:25px;background-color:@item.AlienearColorMaster.ColorImage"></div>*@
+                        <div style="height:25px;width:25px;background-color:@item.AlienearColorMaster.ColorImage"></div>
+                    </td>
+                    <td>
+                        @Html.Label(item.AlienearColorMaster.ColorImage)
+                    </td>
+                    <td>
+                        @Html.Label(item.AlienearColorMaster.ColorName)
+                    </td>
+                    <td>
+                        @if (!string.IsNullOrEmpty(item.ImageLeftEar))
+                        {
+                            //string path = "/Alienear37" + item.ImageLeftEar;
+                            string path = "../../.."+item.ImageLeftEar;
+                            <img src="@path" />
+                        }
+                        else
+                        {
+                            @Html.TextBoxFor(x => x.LeftImage, new { type = "file" , name = "LeftImage" , @class = "leftFile" })
+                        }
+                    </td>
+                    <td>
+                        @if (!string.IsNullOrEmpty(item.ImageRightEar))
+                        {
+                            //string path = "/Alienear37" + item.ImageRightEar;
+                            string path = "../../.." + item.ImageRightEar;
+                            <img src="@path" />
+                        }
+                        else
+                        {
+                            @Html.TextBoxFor(x => x.RightImage, new { type = "file", name = "RightImage", @class = "rightFile" })
+                        }
+                    </td>
+
+                    <td>
+                        @if (!string.IsNullOrEmpty(item.ImageRightEar))
+                        {
+                            <input type='button' class='k-button colorDelete' onClick='deleteColor(this)' value='Delete' data-productID='@item.ImageId' />
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+        @*<tfoot>
+            <tr>
+                <td colspan="9" align="center">
+                    <input type="button" id="btnSave" class="k-button" value="Save" />
+                </td>
+            </tr>
+        </tfoot>*@
+    </table>
+</div>
+@*<div id="images">
+    <img id="left" style="display: none;" />
+
+    <img id="right" style="display: none;" />
+</div>*@
+
+@*</form>*@
+
+@*<table id="UploadColorsImages" class="table">
+    <tr>
+        <th>No.
+        </th>
+        <th>IsSingle
+        </th>
+        <th>Color code
+        </th>
+        <th>Left image
+        </th>
+        <th>Right image
+        </th>
+    </tr>
+
+</table>*@
